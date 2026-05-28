@@ -379,6 +379,4 @@ Every push to `main` triggers a production deploy automatically.
 
 ---
 
-## License
 
-MIT — see [LICENSE](./LICENSE)
