@@ -1,7 +1,7 @@
-import OpenAI from 'openai';
+import Groq from 'groq-sdk';
 import { PRD_GENERATION_PROMPT } from './prompts';
 
-const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
+const client = new Groq({ apiKey: process.env.GROQ_API_KEY });
 
 function stripFences(text: string): string {
   return text.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '');
@@ -13,8 +13,8 @@ export async function generatePRD(
 ): Promise<unknown> {
   const attemptParse = async (): Promise<unknown> => {
     const response = await client.chat.completions.create({
-      model: 'gpt-4o',
-      max_tokens: 4096,
+      model: 'llama-3.3-70b-versatile',
+      max_tokens: 8000,
       messages: [
         {
           role: 'user',
