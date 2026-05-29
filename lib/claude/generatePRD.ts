@@ -1,7 +1,7 @@
-import Anthropic from '@anthropic-ai/sdk';
+import OpenAI from 'openai';
 import { PRD_GENERATION_PROMPT } from './prompts';
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 function stripFences(text: string): string {
   return text.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '');
@@ -10,22 +10,26 @@ function stripFences(text: string): string {
 export async function generatePRD(
   initialInput: string,
   qa: Array<{ question: string; answer: string }>
-) {
+): Promise<unknown> {
   const attemptParse = async (): Promise<unknown> => {
-    const message = await client.messages.create({
-      model: 'claude-sonnet-4-5',
+    const response = await client.chat.completions.create({
+      model: 'gpt-4o',
       max_tokens: 4096,
-      messages: [{ role: 'user', content: PRD_GENERATION_PROMPT(initialInput, qa) }],
+      messages: [
+        {
+          role: 'user',
+          content: PRD_GENERATION_PROMPT(initialInput, qa),
+        },
+      ],
     });
 
-    const text = message.content[0].type === 'text' ? message.content[0].text : '';
+    const text = response.choices[0]?.message?.content ?? '';
     return JSON.parse(stripFences(text));
   };
 
   try {
     return await attemptParse();
   } catch {
-    // Single retry on parse failure
     return await attemptParse();
   }
 }

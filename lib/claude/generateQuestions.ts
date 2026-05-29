@@ -1,23 +1,33 @@
-import Anthropic from '@anthropic-ai/sdk';
+import OpenAI from 'openai';
 import { QUESTION_GENERATION_PROMPT } from './prompts';
 
-const client = new Anthropic({ apiKey: process.env.ANTHROPIC_API_KEY });
+const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 export async function generateQuestions(initialInput: string): Promise<string[]> {
-  const message = await client.messages.create({
-    model: 'claude-sonnet-4-5',
+  const response = await client.chat.completions.create({
+    model: 'gpt-4o',
     max_tokens: 1024,
-    messages: [{ role: 'user', content: QUESTION_GENERATION_PROMPT(initialInput) }],
+    messages: [
+      {
+        role: 'user',
+        content: QUESTION_GENERATION_PROMPT(initialInput),
+      },
+    ],
   });
 
-  const text = message.content[0].type === 'text' ? message.content[0].text : '';
+  const text = response.choices[0]?.message?.content ?? '';
 
-  // Strip accidental code fences before parsing
   const clean = text.trim().replace(/^```(?:json)?\s*/i, '').replace(/\s*```$/i, '');
-  const questions = JSON.parse(clean) as string[];
+
+  let questions: string[];
+  try {
+    questions = JSON.parse(clean) as string[];
+  } catch {
+    throw new Error('Failed to parse questions from OpenAI response');
+  }
 
   if (!Array.isArray(questions) || questions.length !== 5) {
-    throw new Error('Claude did not return exactly 5 questions');
+    throw new Error('OpenAI did not return exactly 5 questions');
   }
 
   return questions;
