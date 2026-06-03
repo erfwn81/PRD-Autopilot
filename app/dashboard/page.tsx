@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Header from '@/components/layout/Header';
 import { createClient } from '@/lib/supabase/server';
 import type { PRDSession } from '@/types';
+import DeletePRDButton from '@/components/dashboard/DeletePRDButton';
 
 function formatDate(date: string) {
   return new Intl.DateTimeFormat('en-US', {
@@ -107,10 +108,9 @@ export default async function DashboardPage() {
                   : `/prd/${session.id}`;
 
               return (
-                <Link
+                <div
                   key={session.id}
-                  href={href}
-                  className="block rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+                  className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
                 >
                   <div className="mb-4 flex items-start justify-between gap-3">
                     <h2 className="line-clamp-2 text-base font-semibold text-gray-900">
@@ -132,11 +132,13 @@ export default async function DashboardPage() {
 
                   <div className="mt-5 flex items-center justify-between text-xs text-gray-400">
                     <span>Created {formatDate(session.created_at)}</span>
-                    <span className="font-medium text-indigo-600">
+                    <Link href={href} className="font-medium text-indigo-600 hover:underline">
                       {session.status === 'complete' ? 'View PRD →' : 'Continue →'}
-                    </span>
+                    </Link>
                   </div>
-                </Link>
+
+                  <DeletePRDButton sessionId={session.id} />
+                </div>
               );
             })}
           </div>
