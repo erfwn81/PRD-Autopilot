@@ -36,6 +36,7 @@ export default function PRDDocument({ prd, onSectionSave }: PRDDocumentProps) {
           <PRDSection
             title="2. User Personas"
             content={JSON.stringify(prd.user_personas, null, 2)}
+            onSave={save('user_personas')}
             renderContent={() => (
               <div className="grid gap-4 sm:grid-cols-2">
                 {prd.user_personas!.map((p, i) => (
@@ -57,6 +58,7 @@ export default function PRDDocument({ prd, onSectionSave }: PRDDocumentProps) {
           <PRDSection
             title="3. Jobs to Be Done"
             content={prd.jobs_to_be_done.join('\n')}
+            onSave={save('jobs_to_be_done')}
             renderContent={() => (
               <ul className="space-y-2">
                 {prd.jobs_to_be_done!.map((j, i) => (
@@ -74,6 +76,7 @@ export default function PRDDocument({ prd, onSectionSave }: PRDDocumentProps) {
           <PRDSection
             title="4. User Stories"
             content={JSON.stringify(prd.user_stories, null, 2)}
+            onSave={save('user_stories')}
             renderContent={() => (
               <div className="space-y-2">
                 {prd.user_stories!.map((s, i) => (
@@ -104,6 +107,7 @@ export default function PRDDocument({ prd, onSectionSave }: PRDDocumentProps) {
           <PRDSection
             title="5. Acceptance Criteria"
             content={JSON.stringify(prd.acceptance_criteria, null, 2)}
+            onSave={save('acceptance_criteria')}
             renderContent={() => (
               <div className="space-y-4">
                 {prd.acceptance_criteria!.map((ac, i) => (
@@ -128,6 +132,7 @@ export default function PRDDocument({ prd, onSectionSave }: PRDDocumentProps) {
           <PRDSection
             title="6. Edge Cases & Error States"
             content={JSON.stringify(prd.edge_cases, null, 2)}
+            onSave={save('edge_cases')}
             renderContent={() => (
               <div className="space-y-3">
                 {prd.edge_cases!.map((ec, i) => (
@@ -147,6 +152,7 @@ export default function PRDDocument({ prd, onSectionSave }: PRDDocumentProps) {
           <PRDSection
             title="7. Out of Scope"
             content={prd.out_of_scope.join('\n')}
+            onSave={save('out_of_scope')}
             renderContent={() => (
               <ul className="space-y-1.5">
                 {prd.out_of_scope!.map((item, i) => (
@@ -164,6 +170,7 @@ export default function PRDDocument({ prd, onSectionSave }: PRDDocumentProps) {
           <PRDSection
             title="8. Success Metrics"
             content={JSON.stringify(prd.success_metrics, null, 2)}
+            onSave={save('success_metrics')}
             renderContent={() => (
               <div className="grid gap-3 sm:grid-cols-2">
                 {prd.success_metrics!.map((m, i) => (
@@ -189,6 +196,7 @@ export default function PRDDocument({ prd, onSectionSave }: PRDDocumentProps) {
             <PRDSection
               title="9. Phased Rollout Plan"
               content={JSON.stringify(prd.rollout_plan, null, 2)}
+              onSave={save('rollout_plan')}
               renderContent={() => (
                 <div className="grid gap-4 sm:grid-cols-3">
                   {[
@@ -224,6 +232,7 @@ export default function PRDDocument({ prd, onSectionSave }: PRDDocumentProps) {
           <PRDSection
             title="10. Open Questions"
             content={JSON.stringify(prd.open_questions, null, 2)}
+            onSave={save('open_questions')}
             renderContent={() => (
               <div className="space-y-3">
                 {prd.open_questions!.map((q, i) => (
