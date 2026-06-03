@@ -60,11 +60,16 @@ export default function ResultPage() {
   }, [sessionId]);
 
   const handleSectionSave = async (section: string, value: string) => {
-    await fetch('/api/prd/update', {
+    const res = await fetch('/api/prd/update', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ sessionId, section, value }),
     });
+
+    if (!res.ok) {
+      const data = await res.json().catch(() => null);
+      throw new Error(data?.error ?? 'Failed to save section');
+    }
   };
 
   if (loading) {
@@ -100,7 +105,7 @@ export default function ResultPage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <ExportBar prd={prd} sessionId={sessionId} />
+      <ExportBar prd={prd} />
       <main className="mx-auto max-w-4xl px-4 py-8">
         <PRDDocument prd={prd} onSectionSave={handleSectionSave} />
       </main>
