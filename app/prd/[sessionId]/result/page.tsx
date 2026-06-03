@@ -59,7 +59,7 @@ export default function ResultPage() {
     load();
   }, [sessionId]);
 
-  const handleSectionSave = async (section: string, value: string) => {
+  const handleSectionSave = async (section: string, value: unknown) => {
     const res = await fetch('/api/prd/update', {
       method: 'PATCH',
       headers: { 'Content-Type': 'application/json' },
