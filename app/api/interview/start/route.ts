@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { createServiceClient } from '@/lib/supabase/server';
+import { createServiceClient, createClient } from '@/lib/supabase/server';
 import { generateQuestions } from '@/lib/claude/generateQuestions';
 
 export async function POST(req: NextRequest) {
@@ -13,8 +13,20 @@ export async function POST(req: NextRequest) {
       );
     }
 
+    // Try to get the authenticated user (optional — app works without auth too)
+    let userId: string | null = null;
+    try {
+      const supabaseAuth = createClient();
+      const { data: { user } } = await supabaseAuth.auth.getUser();
+      userId = user?.id ?? null;
+    } catch {
+      // No auth session — continue as guest
+      userId = null;
+    }
+
     const supabase = createServiceClient();
 
+    // Generate all 5 questions upfront via Groq
     const questions = await generateQuestions(initialInput.trim());
 
     const title = initialInput.trim().slice(0, 80);
@@ -22,7 +34,7 @@ export async function POST(req: NextRequest) {
     const { data: session, error: sessionError } = await supabase
       .from('prd_sessions')
       .insert({
-        user_id: null,
+        user_id: userId, // Now saves real user ID when logged in
         title,
         initial_input: initialInput.trim(),
         status: 'interviewing',
@@ -58,7 +70,7 @@ export async function POST(req: NextRequest) {
   } catch (err) {
     console.error('/api/interview/start error:', err);
     return NextResponse.json(
-      { error: 'Failed to start interview. Check your OPENAI_API_KEY.' },
+      { error: 'Failed to start interview. Check your GROQ_API_KEY.' },
       { status: 500 }
     );
   }
