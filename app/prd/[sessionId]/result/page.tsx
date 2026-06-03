@@ -22,6 +22,7 @@ export default function ResultPage() {
   const sessionId = params.sessionId as string;
 
   const [prd, setPrd] = useState<PRDDocType | null>(null);
+  const [livePrd, setLivePrd] = useState<PRDDocType | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadingMsg, setLoadingMsg] = useState(LOADING_MESSAGES[0]);
   const [error, setError] = useState('');
@@ -35,6 +36,13 @@ export default function ResultPage() {
     }, 2500);
     return () => clearInterval(interval);
   }, [loading]);
+
+  // Keep livePrd in sync when prd first loads
+  useEffect(() => {
+    if (prd && !livePrd) {
+      setLivePrd(prd);
+    }
+  }, [prd, livePrd]);
 
   useEffect(() => {
     const load = async () => {
@@ -103,11 +111,17 @@ export default function ResultPage() {
 
   if (!prd) return null;
 
+  const currentPrd = livePrd ?? prd;
+
   return (
     <div className="min-h-screen bg-gray-50">
-      <ExportBar prd={prd} />
+      <ExportBar prd={currentPrd} />
       <main className="mx-auto max-w-4xl px-4 py-8">
-        <PRDDocument prd={prd} onSectionSave={handleSectionSave} />
+        <PRDDocument
+          prd={prd}
+          onSectionSave={handleSectionSave}
+          onPrdChange={setLivePrd}
+        />
       </main>
     </div>
   );

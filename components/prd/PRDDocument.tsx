@@ -7,15 +7,20 @@ import PRDSection from './PRDSection';
 interface PRDDocumentProps {
   prd: PRDDocType;
   onSectionSave?: (section: string, value: unknown) => Promise<void>;
+  onPrdChange?: (updatedPrd: PRDDocType) => void;
 }
 
-export default function PRDDocument({ prd: initialPrd, onSectionSave }: PRDDocumentProps) {
+export default function PRDDocument({ prd: initialPrd, onSectionSave, onPrdChange }: PRDDocumentProps) {
   const [prd, setPrd] = useState<PRDDocType>(initialPrd);
 
   const handleSave = (section: string) => async (value: unknown) => {
     if (!onSectionSave) return;
     await onSectionSave(section, value);
-    setPrd((prev) => ({ ...prev, [section]: value }));
+    // Update local state immediately
+    const updated = { ...prd, [section]: value };
+    setPrd(updated);
+    // Notify parent so ExportBar stays in sync
+    onPrdChange?.(updated);
   };
 
   return (

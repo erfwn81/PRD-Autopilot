@@ -26,6 +26,7 @@ export default function PRDSection({
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [textValue, setTextValue] = useState(content);
+  const [emptyWarning, setEmptyWarning] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const showSaved = () => {
@@ -36,6 +37,14 @@ export default function PRDSection({
   // Plain text save (problem_statement only)
   const handleTextSave = useCallback(async () => {
     if (!onSave) return;
+
+    // Prevent saving empty content — section would disappear permanently
+    if (!textValue.trim()) {
+      setEmptyWarning(true);
+      setTimeout(() => setEmptyWarning(false), 3000);
+      return;
+    }
+
     setSaving(true);
     try {
       await onSave(textValue);
@@ -94,6 +103,11 @@ export default function PRDSection({
                 >
                   Cancel
                 </button>
+                {emptyWarning && (
+                  <span className="text-xs text-red-500 self-center">
+                    Content cannot be empty
+                  </span>
+                )}
               </div>
             </div>
           )}
