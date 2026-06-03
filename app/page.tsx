@@ -39,12 +39,12 @@ export default function HomePage() {
 
         <h1 className="text-5xl sm:text-6xl font-extrabold text-gray-900 leading-tight max-w-3xl mb-6">
           Turn a vague idea into a{' '}
-          <span className="text-indigo-600">complete PRD</span>{' '}
-          in 5 minutes
+          <span className="text-indigo-600">complete PRD</span> in 5 minutes
         </h1>
 
         <p className="text-xl text-gray-500 max-w-xl mb-10">
-          AI-powered conversational interview. 5 targeted questions. One production-ready Product Requirements Document.
+          AI-powered conversational interview. 5 targeted questions. One
+          production-ready Product Requirements Document.
         </p>
 
         <div className="flex flex-col sm:flex-row gap-3">
@@ -77,11 +77,26 @@ export default function HomePage() {
 
       <section className="mx-auto max-w-4xl px-4 pb-20 grid sm:grid-cols-3 gap-6">
         {[
-          { n: '1', title: 'Describe your idea', desc: '2–3 sentences. No structure needed.' },
-          { n: '2', title: '5 clarifying questions', desc: 'AI asks exactly what a senior PM would ask.' },
-          { n: '3', title: 'Complete PRD', desc: '10 sections, export to Notion, PDF, or Markdown.' },
+          {
+            n: '1',
+            title: 'Describe your idea',
+            desc: '2–3 sentences. No structure needed.',
+          },
+          {
+            n: '2',
+            title: '5 clarifying questions',
+            desc: 'AI asks exactly what a senior PM would ask.',
+          },
+          {
+            n: '3',
+            title: 'Complete PRD',
+            desc: '10 sections, export to Notion, PDF, or Markdown.',
+          },
         ].map((step) => (
-          <div key={step.n} className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+          <div
+            key={step.n}
+            className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6"
+          >
             <div className="w-8 h-8 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold text-sm mb-4">
               {step.n}
             </div>
@@ -90,6 +105,10 @@ export default function HomePage() {
           </div>
         ))}
       </section>
+
+      <footer className="border-t border-gray-200 py-6 text-center text-sm text-gray-400">
+        Built for Mind the Product — World Product Day 2026
+      </footer>
     </main>
   );
 }

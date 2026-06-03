@@ -1,16 +1,22 @@
 'use client';
 
+import { useState } from 'react';
 import { PRDDocument as PRDDocType } from '@/types';
 import PRDSection from './PRDSection';
 
 interface PRDDocumentProps {
   prd: PRDDocType;
-  onSectionSave?: (section: string, value: string) => Promise<void>;
+  onSectionSave?: (section: string, value: unknown) => Promise<void>;
 }
 
-export default function PRDDocument({ prd, onSectionSave }: PRDDocumentProps) {
-  const save = (section: string) =>
-    onSectionSave ? (value: string) => onSectionSave(section, value) : undefined;
+export default function PRDDocument({ prd: initialPrd, onSectionSave }: PRDDocumentProps) {
+  const [prd, setPrd] = useState<PRDDocType>(initialPrd);
+
+  const handleSave = (section: string) => async (value: unknown) => {
+    if (!onSectionSave) return;
+    await onSectionSave(section, value);
+    setPrd((prev) => ({ ...prev, [section]: value }));
+  };
 
   return (
     <article className="bg-white rounded-xl border border-gray-200 shadow-sm divide-y divide-gray-100">
@@ -28,15 +34,20 @@ export default function PRDDocument({ prd, onSectionSave }: PRDDocumentProps) {
           <PRDSection
             title="1. Problem Statement"
             content={prd.problem_statement}
-            onSave={save('problem_statement')}
+            sectionType="text"
+            onSave={async (value) => {
+              await handleSave('problem_statement')(value);
+            }}
           />
         )}
 
         {Array.isArray(prd.user_personas) && (
           <PRDSection
             title="2. User Personas"
-            content={JSON.stringify(prd.user_personas, null, 2)}
-            onSave={save('user_personas')}
+            content=""
+            sectionType="personas"
+            structuredValue={prd.user_personas}
+            onStructuredSave={handleSave('user_personas')}
             renderContent={() => (
               <div className="grid gap-4 sm:grid-cols-2">
                 {prd.user_personas!.map((p, i) => (
@@ -57,8 +68,10 @@ export default function PRDDocument({ prd, onSectionSave }: PRDDocumentProps) {
         {Array.isArray(prd.jobs_to_be_done) && (
           <PRDSection
             title="3. Jobs to Be Done"
-            content={prd.jobs_to_be_done.join('\n')}
-            onSave={save('jobs_to_be_done')}
+            content=""
+            sectionType="jtbd"
+            structuredValue={prd.jobs_to_be_done}
+            onStructuredSave={handleSave('jobs_to_be_done')}
             renderContent={() => (
               <ul className="space-y-2">
                 {prd.jobs_to_be_done!.map((j, i) => (
@@ -75,8 +88,10 @@ export default function PRDDocument({ prd, onSectionSave }: PRDDocumentProps) {
         {Array.isArray(prd.user_stories) && (
           <PRDSection
             title="4. User Stories"
-            content={JSON.stringify(prd.user_stories, null, 2)}
-            onSave={save('user_stories')}
+            content=""
+            sectionType="stories"
+            structuredValue={prd.user_stories}
+            onStructuredSave={handleSave('user_stories')}
             renderContent={() => (
               <div className="space-y-2">
                 {prd.user_stories!.map((s, i) => (
@@ -106,8 +121,10 @@ export default function PRDDocument({ prd, onSectionSave }: PRDDocumentProps) {
         {Array.isArray(prd.acceptance_criteria) && (
           <PRDSection
             title="5. Acceptance Criteria"
-            content={JSON.stringify(prd.acceptance_criteria, null, 2)}
-            onSave={save('acceptance_criteria')}
+            content=""
+            sectionType="criteria"
+            structuredValue={prd.acceptance_criteria}
+            onStructuredSave={handleSave('acceptance_criteria')}
             renderContent={() => (
               <div className="space-y-4">
                 {prd.acceptance_criteria!.map((ac, i) => (
@@ -131,8 +148,10 @@ export default function PRDDocument({ prd, onSectionSave }: PRDDocumentProps) {
         {Array.isArray(prd.edge_cases) && (
           <PRDSection
             title="6. Edge Cases & Error States"
-            content={JSON.stringify(prd.edge_cases, null, 2)}
-            onSave={save('edge_cases')}
+            content=""
+            sectionType="edge_cases"
+            structuredValue={prd.edge_cases}
+            onStructuredSave={handleSave('edge_cases')}
             renderContent={() => (
               <div className="space-y-3">
                 {prd.edge_cases!.map((ec, i) => (
@@ -151,8 +170,10 @@ export default function PRDDocument({ prd, onSectionSave }: PRDDocumentProps) {
         {Array.isArray(prd.out_of_scope) && (
           <PRDSection
             title="7. Out of Scope"
-            content={prd.out_of_scope.join('\n')}
-            onSave={save('out_of_scope')}
+            content=""
+            sectionType="out_of_scope"
+            structuredValue={prd.out_of_scope}
+            onStructuredSave={handleSave('out_of_scope')}
             renderContent={() => (
               <ul className="space-y-1.5">
                 {prd.out_of_scope!.map((item, i) => (
@@ -169,8 +190,10 @@ export default function PRDDocument({ prd, onSectionSave }: PRDDocumentProps) {
         {Array.isArray(prd.success_metrics) && (
           <PRDSection
             title="8. Success Metrics"
-            content={JSON.stringify(prd.success_metrics, null, 2)}
-            onSave={save('success_metrics')}
+            content=""
+            sectionType="metrics"
+            structuredValue={prd.success_metrics}
+            onStructuredSave={handleSave('success_metrics')}
             renderContent={() => (
               <div className="grid gap-3 sm:grid-cols-2">
                 {prd.success_metrics!.map((m, i) => (
@@ -190,13 +213,10 @@ export default function PRDDocument({ prd, onSectionSave }: PRDDocumentProps) {
 
         {prd.rollout_plan &&
           typeof prd.rollout_plan === 'object' &&
-          'phase_1' in prd.rollout_plan &&
-          'phase_2' in prd.rollout_plan &&
-          'phase_3' in prd.rollout_plan && (
+          'phase_1' in prd.rollout_plan && (
             <PRDSection
               title="9. Phased Rollout Plan"
-              content={JSON.stringify(prd.rollout_plan, null, 2)}
-              onSave={save('rollout_plan')}
+              content=""
               renderContent={() => (
                 <div className="grid gap-4 sm:grid-cols-3">
                   {[
@@ -231,8 +251,10 @@ export default function PRDDocument({ prd, onSectionSave }: PRDDocumentProps) {
         {Array.isArray(prd.open_questions) && (
           <PRDSection
             title="10. Open Questions"
-            content={JSON.stringify(prd.open_questions, null, 2)}
-            onSave={save('open_questions')}
+            content=""
+            sectionType="questions"
+            structuredValue={prd.open_questions}
+            onStructuredSave={handleSave('open_questions')}
             renderContent={() => (
               <div className="space-y-3">
                 {prd.open_questions!.map((q, i) => (
