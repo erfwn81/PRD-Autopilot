@@ -1,11 +1,12 @@
 'use client';
 
 import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, useSearchParams } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
 
   // Stores login credentials entered by the user
   const [email, setEmail] = useState('');
@@ -38,7 +39,8 @@ export default function LoginPage() {
       return;
     }
 
-    router.push('/dashboard');
+    const redirectTo = searchParams.get('redirectTo') ?? '/dashboard';
+    router.push(redirectTo);
   };
 
   return (
