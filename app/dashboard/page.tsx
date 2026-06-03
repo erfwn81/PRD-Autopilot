@@ -23,6 +23,10 @@ function statusClasses(status: PRDSession['status']) {
   return 'bg-gray-100 text-gray-700';
 }
 
+export const metadata = {
+  title: 'My PRDs — PRD Autopilot',
+};
+
 export default async function DashboardPage() {
   const supabase = createClient();
 

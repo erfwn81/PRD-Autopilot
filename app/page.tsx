@@ -1,19 +1,16 @@
 import Link from 'next/link';
+import Header from '@/components/layout/Header';
+
+export const metadata = {
+  title: 'PRD Autopilot — Turn ideas into PRDs in 5 minutes',
+  description: 'AI-powered conversational interview. 5 targeted questions. One production-ready Product Requirements Document.',
+};
 
 export default function HomePage() {
   return (
     <main className="min-h-screen bg-gradient-to-br from-indigo-50 via-white to-purple-50 flex flex-col">
-      <header className="border-b border-gray-200 bg-white/80 backdrop-blur sticky top-0 z-10">
-        <div className="mx-auto max-w-5xl px-4 py-4 flex items-center justify-between">
-          <span className="font-bold text-lg text-indigo-600 tracking-tight">PRD Autopilot</span>
-          <Link
-            href="/auth/login"
-            className="text-sm text-gray-600 hover:text-gray-900 transition-colors"
-          >
-            Sign in
-          </Link>
-        </div>
-      </header>
+      {/* Use shared Header so auth state shows correctly */}
+      <Header />
 
       <section className="flex-1 flex flex-col items-center justify-center px-4 py-20 text-center">
         <p className="text-sm font-semibold text-indigo-600 tracking-wide uppercase mb-4">
@@ -25,7 +22,8 @@ export default function HomePage() {
           in 5 minutes
         </h1>
         <p className="text-xl text-gray-500 max-w-xl mb-10">
-          AI-powered conversational interview. 5 targeted questions. One production-ready Product Requirements Document.
+          AI-powered conversational interview. 5 targeted questions. One
+          production-ready Product Requirements Document.
         </p>
         <div className="flex flex-col sm:flex-row gap-3">
           <Link
@@ -43,13 +41,29 @@ export default function HomePage() {
         </div>
       </section>
 
+      {/* How it works */}
       <section className="mx-auto max-w-4xl px-4 pb-20 grid sm:grid-cols-3 gap-6">
         {[
-          { n: '1', title: 'Describe your idea', desc: '2–3 sentences. No structure needed.' },
-          { n: '2', title: '5 clarifying questions', desc: 'AI asks exactly what a senior PM would ask.' },
-          { n: '3', title: 'Complete PRD', desc: '10 sections, export to Notion, PDF, or Markdown.' },
+          {
+            n: '1',
+            title: 'Describe your idea',
+            desc: '2–3 sentences. No structure needed.',
+          },
+          {
+            n: '2',
+            title: '5 clarifying questions',
+            desc: 'AI asks exactly what a senior PM would ask.',
+          },
+          {
+            n: '3',
+            title: 'Complete PRD',
+            desc: '10 sections, export to Notion, PDF, or Markdown.',
+          },
         ].map((step) => (
-          <div key={step.n} className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+          <div
+            key={step.n}
+            className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6"
+          >
             <div className="w-8 h-8 bg-indigo-100 text-indigo-600 rounded-full flex items-center justify-center font-bold text-sm mb-4">
               {step.n}
             </div>
@@ -58,6 +72,11 @@ export default function HomePage() {
           </div>
         ))}
       </section>
+
+      {/* Footer */}
+      <footer className="border-t border-gray-200 py-6 text-center text-sm text-gray-400">
+        Built for Mind the Product — World Product Day 2026
+      </footer>
     </main>
   );
 }
