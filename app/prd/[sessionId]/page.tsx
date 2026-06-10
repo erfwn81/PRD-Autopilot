@@ -7,12 +7,12 @@ import QuestionCard from '@/components/interview/QuestionCard';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
 const GENERATION_MESSAGES = [
-  'Defining the problem space...',
-  'Building user personas...',
-  'Writing user stories...',
-  'Mapping acceptance criteria...',
-  'Drafting your rollout plan...',
-  'Finalising the PRD...',
+  'Running specialized AI agents...',
+  'Agent 1: Analyzing user personas...',
+  'Agent 2: Defining the problem...',
+  'Agent 3: Writing user stories...',
+  'Agent 4: Mapping acceptance criteria...',
+  'Agent 5: Building metrics and rollout plan...',
 ];
 
 export default function InterviewPage() {
@@ -71,7 +71,7 @@ export default function InterviewPage() {
         if (data.done) {
           setLoading(false);
           setGenerating(true);
-          const genRes = await fetch('/api/prd/generate', {
+          const genRes = await fetch('/api/prd/generate-swarm', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ sessionId }),

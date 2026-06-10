@@ -106,6 +106,46 @@ export default function HomePage() {
         ))}
       </section>
 
+      {/* Platform Features */}
+      <section className="mx-auto max-w-4xl px-4 pb-20">
+        <p className="text-xs font-semibold text-indigo-600 uppercase tracking-wide text-center mb-2">
+          Platform Features
+        </p>
+        <h2 className="text-2xl font-bold text-gray-900 text-center mb-8">
+          Everything a PM team needs
+        </h2>
+        <div className="grid sm:grid-cols-2 gap-5">
+          {[
+            {
+              icon: '⚡',
+              title: 'Multi-Agent PRD Generation',
+              desc: '5 specialized AI agents run in parallel — persona research, problem framing, user stories, acceptance criteria, and metrics — delivering higher quality in less time.',
+            },
+            {
+              icon: '💬',
+              title: 'Stakeholder Review & Comments',
+              desc: 'Share a public link to your PRD with stakeholders. They can read every section and leave inline comments — no account required.',
+            },
+            {
+              icon: '📊',
+              title: 'PRD Health Scoring',
+              desc: 'Get an instant quality score across clarity, completeness, testability, and measurability — with specific gaps and improvement suggestions.',
+            },
+            {
+              icon: '🤖',
+              title: 'AI PM Chat',
+              desc: 'Chat with an expert product manager coach. Get help with prioritization, roadmaps, stakeholder management, and product strategy — link your PRD for specific advice.',
+            },
+          ].map((feat) => (
+            <div key={feat.title} className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
+              <div className="text-2xl mb-3">{feat.icon}</div>
+              <h3 className="font-semibold text-gray-900 mb-2">{feat.title}</h3>
+              <p className="text-sm text-gray-500">{feat.desc}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
       <footer className="border-t border-gray-200 py-6 text-center text-sm text-gray-400">
         Built for Mind the Product — World Product Day 2026
       </footer>
