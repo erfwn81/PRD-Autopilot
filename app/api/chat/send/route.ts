@@ -4,7 +4,7 @@ import { chatAgent } from '@/lib/agents/chatAgent';
 
 export async function POST(req: NextRequest) {
   try {
-    const { session_id, message, prd_context } = await req.json();
+    const { session_id, message, prd_context, attachment_ids, attachments_context } = await req.json();
 
     if (!session_id || !message) {
       return NextResponse.json({ error: 'session_id and message required' }, { status: 400 });
@@ -37,12 +37,28 @@ export async function POST(req: NextRequest) {
       .eq('session_id', session_id)
       .order('created_at', { ascending: true });
 
-    // Save user message
-    await supabase.from('chat_messages').insert({
-      session_id,
-      role: 'user',
-      content: message,
-    });
+    // Save user message (store only the plain text, not the attachment context)
+    const { data: userMsg } = await supabase
+      .from('chat_messages')
+      .insert({ session_id, role: 'user', content: message })
+      .select()
+      .single();
+
+    // C3: Link attachments to this message
+    if (Array.isArray(attachment_ids) && attachment_ids.length > 0 && userMsg) {
+      await supabase
+        .from('chat_attachments')
+        .update({ message_id: userMsg.id })
+        .in('id', attachment_ids)
+        .eq('session_id', session_id);
+    }
+
+    // C3: Build agent content with attachment context prepended (truncated to 8000 chars)
+    let agentContent = message;
+    if (attachments_context) {
+      const truncated = attachments_context.slice(0, 8000);
+      agentContent = `[Attached file contents]\n${truncated}\n[End of attached files]\n\nUser message: ${message}`;
+    }
 
     // Build messages for agent
     const messages = [
@@ -50,7 +66,7 @@ export async function POST(req: NextRequest) {
         role: m.role,
         content: m.content,
       })),
-      { role: 'user', content: message },
+      { role: 'user', content: agentContent },
     ];
 
     // Get AI response
@@ -63,7 +79,7 @@ export async function POST(req: NextRequest) {
       .select()
       .single();
 
-    // Update session updated_at and maybe set title from first message
+    // Update session updated_at and set title from first message if needed
     const isFirstMessage = !history || history.length === 0;
     const newTitle = isFirstMessage ? message.slice(0, 40) : session.title;
 

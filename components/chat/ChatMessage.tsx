@@ -1,6 +1,7 @@
 'use client';
 
-import type { ChatMessage as ChatMessageType } from '@/types/agent';
+import { useState, useEffect } from 'react';
+import type { ChatMessage as ChatMessageType, ChatAttachment } from '@/types/agent';
 
 interface ChatMessageProps {
   message: ChatMessageType;
@@ -48,7 +49,6 @@ function renderContent(text: string): React.ReactNode {
       if (line.trim() === '') {
         if (idx > 0) elements.push(<br key={elements.length} />);
       } else {
-        // Render **bold** inline
         const parts = line.split(/(\*\*[^*]+\*\*)/g);
         elements.push(
           <p key={elements.length} className="text-sm leading-relaxed">
@@ -65,8 +65,65 @@ function renderContent(text: string): React.ReactNode {
   return <>{elements}</>;
 }
 
+function formatBytes(b: number): string {
+  if (b < 1024) return `${b} B`;
+  if (b < 1024 * 1024) return `${(b / 1024).toFixed(1)} KB`;
+  return `${(b / (1024 * 1024)).toFixed(1)} MB`;
+}
+
+const IMAGE_TYPES = ['image/png', 'image/jpeg', 'image/jpg', 'image/webp', 'image/gif'];
+
+function AttachmentCard({ attachment }: { attachment: ChatAttachment }) {
+  const [signedUrl, setSignedUrl] = useState<string | null>(null);
+  const isImage = IMAGE_TYPES.includes(attachment.mime_type);
+
+  useEffect(() => {
+    if (!isImage) return;
+    fetch(`/api/chat/attachments/${attachment.id}`)
+      .then(r => r.json())
+      .then(d => { if (d.url) setSignedUrl(d.url); })
+      .catch(() => {});
+  }, [attachment.id, isImage]);
+
+  const handleDownload = async () => {
+    const res = await fetch(`/api/chat/attachments/${attachment.id}`);
+    const data = await res.json();
+    if (data.url) window.open(data.url, '_blank');
+  };
+
+  return (
+    <div className="mt-2 rounded-lg border border-gray-200 bg-white overflow-hidden max-w-xs">
+      {isImage && signedUrl && (
+        // eslint-disable-next-line @next/next/no-img-element
+        <img
+          src={signedUrl}
+          alt={attachment.file_name}
+          className="w-full max-h-48 object-cover"
+          onError={() => setSignedUrl(null)}
+        />
+      )}
+      <div className="flex items-center gap-2 px-3 py-2">
+        <span className="text-gray-400 shrink-0">
+          {isImage ? '🖼' : '📎'}
+        </span>
+        <div className="flex-1 min-w-0">
+          <p className="text-xs font-medium text-gray-900 truncate">{attachment.file_name}</p>
+          <p className="text-xs text-gray-400">{formatBytes(attachment.size_bytes)}</p>
+        </div>
+        <button
+          onClick={handleDownload}
+          className="shrink-0 text-xs text-indigo-600 hover:text-indigo-800 font-medium px-2 py-1 rounded hover:bg-indigo-50 transition-colors"
+        >
+          Download
+        </button>
+      </div>
+    </div>
+  );
+}
+
 export default function ChatMessage({ message }: ChatMessageProps) {
   const isUser = message.role === 'user';
+  const attachments = message.attachments ?? [];
 
   return (
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-3`}>
@@ -75,17 +132,27 @@ export default function ChatMessage({ message }: ChatMessageProps) {
           AI
         </div>
       )}
-      <div
-        className={`max-w-[80%] rounded-2xl px-4 py-3 ${
-          isUser
-            ? 'bg-indigo-600 text-white rounded-tr-none'
-            : 'bg-gray-100 text-gray-900 rounded-tl-none'
-        }`}
-      >
-        {isUser
-          ? <p className="text-sm leading-relaxed">{message.content}</p>
-          : renderContent(message.content)
-        }
+      <div className={`max-w-[80%] ${isUser ? '' : ''}`}>
+        <div
+          className={`rounded-2xl px-4 py-3 ${
+            isUser
+              ? 'bg-indigo-600 text-white rounded-tr-none'
+              : 'bg-gray-100 text-gray-900 rounded-tl-none'
+          }`}
+        >
+          {isUser
+            ? <p className="text-sm leading-relaxed">{message.content}</p>
+            : renderContent(message.content)
+          }
+        </div>
+        {/* C5: Attachment cards */}
+        {attachments.length > 0 && (
+          <div className={`mt-1 ${isUser ? 'flex flex-col items-end' : ''}`}>
+            {attachments.map(att => (
+              <AttachmentCard key={att.id} attachment={att} />
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );

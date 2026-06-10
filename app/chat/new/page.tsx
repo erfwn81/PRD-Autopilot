@@ -1,53 +1,45 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
-import LoadingSpinner from '@/components/ui/LoadingSpinner';
+import ChatSidebar from '@/components/chat/ChatSidebar';
+import ChatView from '@/components/chat/ChatView';
 
 export default function NewChatPage() {
   const router = useRouter();
-  const [error, setError] = useState('');
+  const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [refreshKey, setRefreshKey] = useState(0);
 
+  // Auth check
   useEffect(() => {
     const supabase = createClient();
-    supabase.auth.getUser().then(async ({ data: { user } }) => {
-      if (!user) {
-        router.push('/auth/login?redirectTo=/chat/new');
-        return;
-      }
-      try {
-        const res = await fetch('/api/chat/sessions', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ title: 'New Chat' }),
-        });
-        if (!res.ok) throw new Error('Failed to create chat session');
-        const { session } = await res.json();
-        router.push(`/chat/${session.id}`);
-      } catch {
-        setError('Failed to create chat. Please try again.');
-      }
+    supabase.auth.getUser().then(({ data: { user } }) => {
+      if (!user) router.push('/auth/login?redirectTo=/chat/new');
     });
   }, [router]);
 
-  if (error) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center gap-4">
-        <p className="text-red-600 text-sm">{error}</p>
-        <button onClick={() => router.push('/dashboard')} className="text-indigo-600 hover:underline text-sm">
-          Back to dashboard
-        </button>
-      </div>
-    );
-  }
+  // D4: When ChatView creates a new session on first send, refresh sidebar
+  const handleSessionCreated = useCallback(() => {
+    setRefreshKey(k => k + 1);
+    // ChatView handles the router.replace('/chat/id') itself
+  }, []);
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-      <div className="text-center">
-        <LoadingSpinner />
-        <p className="text-sm text-gray-500 mt-4">Creating your chat...</p>
-      </div>
+    <div className="flex h-screen overflow-hidden">
+      <ChatSidebar
+        activeSessionId={undefined}
+        refreshKey={refreshKey}
+        isOpen={sidebarOpen}
+        onClose={() => setSidebarOpen(false)}
+      />
+      <main className="flex-1 flex flex-col min-w-0 h-screen">
+        <ChatView
+          sessionId={undefined}
+          onToggleSidebar={() => setSidebarOpen(o => !o)}
+          onSessionCreated={handleSessionCreated}
+        />
+      </main>
     </div>
   );
 }

@@ -26,13 +26,25 @@ export async function GET(
       return NextResponse.json({ error: 'Session not found' }, { status: 404 });
     }
 
-    const { data: messages } = await supabase
+    // C3: Include attachments per message
+    const { data: rawMessages } = await supabase
       .from('chat_messages')
-      .select('*')
+      .select(`
+        *,
+        chat_attachments (id, file_name, mime_type, size_bytes)
+      `)
       .eq('session_id', sessionId)
       .order('created_at', { ascending: true });
 
-    return NextResponse.json({ session, messages: messages ?? [] });
+    // Normalize chat_attachments → attachments
+    const messages = ((rawMessages ?? []) as Array<Record<string, unknown>>).map(
+      ({ chat_attachments, ...rest }) => ({
+        ...rest,
+        attachments: (chat_attachments as unknown[]) ?? [],
+      })
+    );
+
+    return NextResponse.json({ session, messages });
   } catch (err) {
     console.error('/api/chat/sessions/[sessionId] GET error:', err);
     return NextResponse.json({ error: 'Server error' }, { status: 500 });
@@ -64,6 +76,7 @@ export async function DELETE(
       return NextResponse.json({ error: 'Session not found' }, { status: 404 });
     }
 
+    await supabase.from('chat_attachments').delete().eq('session_id', sessionId);
     await supabase.from('chat_messages').delete().eq('session_id', sessionId);
     await supabase.from('chat_sessions').delete().eq('id', sessionId);
 

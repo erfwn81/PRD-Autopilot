@@ -27,11 +27,19 @@ export interface PRDScore {
   suggestions: string[];
 }
 
+export interface ChatAttachment {
+  id: string;
+  file_name: string;
+  mime_type: string;
+  size_bytes: number;
+}
+
 export interface ChatMessage {
   id: string;
   role: 'user' | 'assistant';
   content: string;
   created_at: string;
+  attachments?: ChatAttachment[];
 }
 
 export interface ChatSession {
