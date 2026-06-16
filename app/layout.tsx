@@ -15,7 +15,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className="antialiased bg-white text-gray-900">
+      <body className="antialiased bg-background text-gray-200">
         {children}
         {/* Novus.ai analytics — required for hackathon prize eligibility */}
         <Script

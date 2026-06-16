@@ -101,7 +101,7 @@ export default function InterviewPage() {
 
   if (!initialized) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
+      <div className="min-h-screen bg-background flex items-center justify-center">
         <LoadingSpinner />
       </div>
     );
@@ -109,22 +109,31 @@ export default function InterviewPage() {
 
   if (generating) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center gap-6 px-4">
-        <LoadingSpinner />
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-6 px-4 bg-grid"
+        style={{ background: `radial-gradient(ellipse 60% 50% at 50% 40%, rgba(109,94,245,0.10) 0%, transparent 70%), #0A0A0F` }}>
+        <LoadingSpinner size="lg" />
         <div className="text-center">
-          <p className="text-lg font-semibold text-gray-900 mb-1">Generating your PRD</p>
-          <p className="text-gray-500 text-sm animate-pulse">{genMessage}</p>
+          <p className="text-lg font-semibold text-white mb-2">Generating your PRD</p>
+          <p className="text-sm text-gray-500 animate-pulse">{genMessage}</p>
+        </div>
+        {/* Agent progress indicators */}
+        <div className="flex gap-2 mt-2">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="w-2 h-2 rounded-full animate-pulse-slow"
+              style={{ background: '#6D5EF5', animationDelay: `${i * 200}ms` }} />
+          ))}
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background flex flex-col">
       <Header />
-      <main className="mx-auto max-w-2xl px-4 py-8 sm:py-16">
+      <main className="flex-1 mx-auto max-w-2xl w-full px-4 py-8 sm:py-16">
         {error && (
-          <div className="mb-6 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+          <div className="mb-6 rounded-xl px-4 py-3 text-sm text-danger"
+            style={{ background: 'rgba(248,113,113,0.10)', border: '1px solid rgba(248,113,113,0.25)' }}>
             {error}
           </div>
         )}

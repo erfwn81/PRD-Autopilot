@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Header from '@/components/layout/Header';
+import Footer from '@/components/layout/Footer';
 import InitialInput from '@/components/interview/InitialInput';
 
 export default function NewPage() {
@@ -26,12 +27,7 @@ export default function NewPage() {
       }
 
       const { sessionId, question, questionNumber } = await res.json();
-
-      sessionStorage.setItem(
-        `prd_q_${sessionId}`,
-        JSON.stringify({ question, questionNumber })
-      );
-
+      sessionStorage.setItem(`prd_q_${sessionId}`, JSON.stringify({ question, questionNumber }));
       router.push(`/prd/${sessionId}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong');
@@ -40,16 +36,18 @@ export default function NewPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background flex flex-col">
       <Header />
-      <main className="mx-auto max-w-2xl px-4 py-8 sm:py-16">
+      <main className="flex-1 mx-auto max-w-2xl w-full px-4 py-8 sm:py-16">
         {error && (
-          <div className="mb-6 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-700">
+          <div className="mb-6 rounded-xl px-4 py-3 text-sm text-danger"
+            style={{ background: 'rgba(248,113,113,0.10)', border: '1px solid rgba(248,113,113,0.25)' }}>
             {error}
           </div>
         )}
         <InitialInput onSubmit={handleSubmit} loading={loading} />
       </main>
+      <Footer />
     </div>
   );
 }

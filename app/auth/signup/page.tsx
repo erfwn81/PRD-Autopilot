@@ -18,7 +18,6 @@ export default function SignupPage() {
     setError('');
 
     const supabase = createClient();
-
     const { data, error } = await supabase.auth.signUp({ email, password });
 
     if (error) {
@@ -27,35 +26,42 @@ export default function SignupPage() {
       return;
     }
 
-    // If session exists immediately — email confirmation is disabled, go straight in
     if (data.session) {
       router.push('/dashboard');
       return;
     }
 
-    // If no session — Supabase sent a confirmation email, tell the user
     setConfirmed(true);
     setLoading(false);
   };
 
-  // Show confirmation message after signup
   if (confirmed) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-        <div className="w-full max-w-sm bg-white rounded-xl shadow-sm border border-gray-200 p-8 text-center">
-          <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg className="w-6 h-6 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+      <div
+        className="min-h-screen flex items-center justify-center px-4 bg-background bg-grid"
+        style={{ background: `radial-gradient(ellipse 60% 40% at 50% 40%, rgba(109,94,245,0.12) 0%, transparent 70%), #0A0A0F` }}
+      >
+        <div
+          className="w-full max-w-sm rounded-2xl p-8 text-center"
+          style={{ background: 'rgba(255,255,255,0.04)', backdropFilter: 'blur(24px)', border: '1px solid rgba(255,255,255,0.10)' }}
+        >
+          <div
+            className="w-14 h-14 rounded-2xl flex items-center justify-center mx-auto mb-5"
+            style={{ background: 'rgba(52,211,153,0.15)', border: '1px solid rgba(52,211,153,0.3)' }}
+          >
+            <svg className="w-7 h-7 text-success" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
             </svg>
           </div>
-          <h1 className="text-xl font-bold text-gray-900 mb-2">Check your email</h1>
+          <h1 className="text-xl font-bold text-white mb-2">Check your email</h1>
           <p className="text-sm text-gray-500 mb-6">
-            We sent a confirmation link to <strong>{email}</strong>.
-            Click the link to activate your account, then sign in.
+            We sent a confirmation link to{' '}
+            <span className="text-gray-300 font-medium">{email}</span>.
+            Click it to activate your account.
           </p>
           <a
             href="/auth/login"
-            className="block w-full bg-indigo-600 text-white rounded-lg py-2 text-sm font-medium hover:bg-indigo-700 transition-colors"
+            className="btn-primary block w-full py-2.5 text-sm rounded-xl text-center"
           >
             Go to sign in
           </a>
@@ -65,55 +71,63 @@ export default function SignupPage() {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex items-center justify-center px-4">
-      <div className="w-full max-w-sm bg-white rounded-xl shadow-sm border border-gray-200 p-8">
-        <div className="mb-6">
-          <h1 className="text-2xl font-bold text-gray-900">Create account</h1>
+    <div
+      className="min-h-screen flex items-center justify-center px-4 bg-background bg-grid"
+      style={{ background: `radial-gradient(ellipse 60% 40% at 50% 40%, rgba(109,94,245,0.12) 0%, transparent 70%), #0A0A0F` }}
+    >
+      <div
+        className="w-full max-w-sm rounded-2xl p-8"
+        style={{
+          background: 'rgba(255,255,255,0.04)',
+          backdropFilter: 'blur(24px)',
+          border: '1px solid rgba(255,255,255,0.10)',
+          boxShadow: '0 0 60px rgba(109,94,245,0.15), 0 30px 60px rgba(0,0,0,0.5)',
+        }}
+      >
+        <div className="mb-7">
+          <div className="flex items-center gap-2 mb-5">
+            <svg width="22" height="22" viewBox="0 0 20 20" fill="none">
+              <path d="M10 1.5L12.2 8H19L13.4 11.9L15.6 18.5L10 14.6L4.4 18.5L6.6 11.9L1 8H7.8L10 1.5Z"
+                fill="url(#signup-spark)" />
+              <defs>
+                <linearGradient id="signup-spark" x1="1" y1="1.5" x2="19" y2="18.5" gradientUnits="userSpaceOnUse">
+                  <stop stopColor="#6D5EF5"/><stop offset="1" stopColor="#22D3EE"/>
+                </linearGradient>
+              </defs>
+            </svg>
+            <span className="font-semibold text-white text-sm">PRD Autopilot</span>
+          </div>
+          <h1 className="text-2xl font-bold text-white">Create account</h1>
           <p className="text-sm text-gray-500 mt-1">Start writing better PRDs in minutes</p>
         </div>
 
         {error && (
-          <div className="mb-4 p-3 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
+          <div className="mb-4 p-3 rounded-lg text-sm text-danger"
+            style={{ background: 'rgba(248,113,113,0.10)', border: '1px solid rgba(248,113,113,0.25)' }}>
             {error}
           </div>
         )}
 
         <form onSubmit={handleSignup} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-            <input
-              type="email"
-              placeholder="you@company.com"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
+            <label className="block text-xs font-medium uppercase tracking-widest text-gray-500 mb-1.5">Email</label>
+            <input type="email" placeholder="you@company.com" required value={email}
+              onChange={(e) => setEmail(e.target.value)} className="input-dark" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
-            <input
-              type="password"
-              placeholder="At least 6 characters"
-              required
-              minLength={6}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
+            <label className="block text-xs font-medium uppercase tracking-widest text-gray-500 mb-1.5">Password</label>
+            <input type="password" placeholder="At least 6 characters" required minLength={6} value={password}
+              onChange={(e) => setPassword(e.target.value)} className="input-dark" />
           </div>
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full bg-indigo-600 text-white rounded-lg py-2.5 text-sm font-medium hover:bg-indigo-700 disabled:opacity-50 transition-colors"
-          >
-            {loading ? 'Creating account...' : 'Create account'}
+          <button type="submit" disabled={loading}
+            className="w-full btn-primary py-2.5 text-sm rounded-xl mt-2">
+            {loading ? 'Creating account…' : 'Create account'}
           </button>
         </form>
 
         <p className="mt-5 text-center text-sm text-gray-500">
           Already have an account?{' '}
-          <a href="/auth/login" className="text-indigo-600 font-medium hover:underline">
+          <a href="/auth/login" className="text-primary hover:text-primary-hover font-medium transition-colors">
             Sign in
           </a>
         </p>

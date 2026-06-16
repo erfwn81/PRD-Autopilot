@@ -18,13 +18,13 @@ function renderContent(text: string): React.ReactNode {
     if (listType === 'ol') {
       elements.push(
         <ol key={elements.length} className="list-decimal list-inside space-y-0.5 my-1">
-          {listItems.map((item, i) => <li key={i} className="text-sm">{item}</li>)}
+          {listItems.map((item, i) => <li key={i} className="text-sm text-gray-300">{item}</li>)}
         </ol>
       );
     } else {
       elements.push(
         <ul key={elements.length} className="list-disc list-inside space-y-0.5 my-1">
-          {listItems.map((item, i) => <li key={i} className="text-sm">{item}</li>)}
+          {listItems.map((item, i) => <li key={i} className="text-sm text-gray-300">{item}</li>)}
         </ul>
       );
     }
@@ -51,10 +51,10 @@ function renderContent(text: string): React.ReactNode {
       } else {
         const parts = line.split(/(\*\*[^*]+\*\*)/g);
         elements.push(
-          <p key={elements.length} className="text-sm leading-relaxed">
+          <p key={elements.length} className="text-sm leading-relaxed text-gray-300">
             {parts.map((part, i) => {
               const boldMatch = /^\*\*(.+)\*\*$/.exec(part);
-              return boldMatch ? <strong key={i}>{boldMatch[1]}</strong> : part;
+              return boldMatch ? <strong key={i} className="text-white font-semibold">{boldMatch[1]}</strong> : part;
             })}
           </p>
         );
@@ -92,28 +92,22 @@ function AttachmentCard({ attachment }: { attachment: ChatAttachment }) {
   };
 
   return (
-    <div className="mt-2 rounded-lg border border-gray-200 bg-white overflow-hidden max-w-xs">
+    <div className="mt-2 rounded-xl overflow-hidden max-w-xs"
+      style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.10)' }}>
       {isImage && signedUrl && (
         // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={signedUrl}
-          alt={attachment.file_name}
+        <img src={signedUrl} alt={attachment.file_name}
           className="w-full max-h-48 object-cover"
-          onError={() => setSignedUrl(null)}
-        />
+          onError={() => setSignedUrl(null)} />
       )}
       <div className="flex items-center gap-2 px-3 py-2">
-        <span className="text-gray-400 shrink-0">
-          {isImage ? '🖼' : '📎'}
-        </span>
+        <span className="text-gray-500 shrink-0">{isImage ? '🖼' : '📎'}</span>
         <div className="flex-1 min-w-0">
-          <p className="text-xs font-medium text-gray-900 truncate">{attachment.file_name}</p>
-          <p className="text-xs text-gray-400">{formatBytes(attachment.size_bytes)}</p>
+          <p className="text-xs font-medium text-gray-300 truncate">{attachment.file_name}</p>
+          <p className="text-xs text-gray-600">{formatBytes(attachment.size_bytes)}</p>
         </div>
-        <button
-          onClick={handleDownload}
-          className="shrink-0 text-xs text-indigo-600 hover:text-indigo-800 font-medium px-2 py-1 rounded hover:bg-indigo-50 transition-colors"
-        >
+        <button onClick={handleDownload}
+          className="text-xs text-primary hover:text-primary-hover px-2 py-1 rounded transition-colors shrink-0">
           Download
         </button>
       </div>
@@ -128,24 +122,28 @@ export default function ChatMessage({ message }: ChatMessageProps) {
   return (
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} mb-3`}>
       {!isUser && (
-        <div className="w-7 h-7 rounded-full bg-indigo-100 flex items-center justify-center text-indigo-600 text-xs font-bold mr-2 shrink-0 mt-0.5">
+        <div
+          className="w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold mr-2 shrink-0 mt-0.5"
+          style={{ background: 'rgba(109,94,245,0.20)', color: '#8B7CFF' }}
+        >
           AI
         </div>
       )}
       <div className={`max-w-[80%] ${isUser ? '' : ''}`}>
         <div
-          className={`rounded-2xl px-4 py-3 ${
-            isUser
-              ? 'bg-indigo-600 text-white rounded-tr-none'
-              : 'bg-gray-100 text-gray-900 rounded-tl-none'
-          }`}
+          className={`rounded-2xl px-4 py-3 ${isUser ? 'rounded-tr-none' : 'rounded-tl-none'}`}
+          style={isUser ? {
+            background: 'linear-gradient(135deg,#6D5EF5,#8B7CFF)',
+          } : {
+            background: 'rgba(255,255,255,0.05)',
+            border: '1px solid rgba(255,255,255,0.08)',
+          }}
         >
           {isUser
-            ? <p className="text-sm leading-relaxed">{message.content}</p>
+            ? <p className="text-sm leading-relaxed text-white">{message.content}</p>
             : renderContent(message.content)
           }
         </div>
-        {/* C5: Attachment cards */}
         {attachments.length > 0 && (
           <div className={`mt-1 ${isUser ? 'flex flex-col items-end' : ''}`}>
             {attachments.map(att => (
