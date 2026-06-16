@@ -60,13 +60,16 @@ export default function ChatSidebar({ activeSessionId, refreshKey, isOpen, onClo
   };
 
   const sidebarContent = (
-    <div className="flex flex-col h-full bg-gray-50 border-r border-gray-200">
+    <div
+      className="flex flex-col h-full"
+      style={{ background: 'var(--surface)', borderRight: '1px solid rgba(255,255,255,0.08)' }}
+    >
       {/* New chat button */}
-      <div className="p-3 border-b border-gray-200">
+      <div className="p-3" style={{ borderBottom: '1px solid rgba(255,255,255,0.08)' }}>
         <Link
           href="/chat/new"
           onClick={onClose}
-          className="flex items-center justify-center w-full gap-2 px-4 py-2 bg-indigo-600 text-white text-sm font-medium rounded-lg hover:bg-indigo-700 transition-colors"
+          className="btn-primary flex items-center justify-center w-full gap-2 px-4 py-2 text-sm rounded-xl"
         >
           <span>+</span>
           <span>New Chat</span>
@@ -78,33 +81,37 @@ export default function ChatSidebar({ activeSessionId, refreshKey, isOpen, onClo
         {loading ? (
           <div className="px-3 py-4 space-y-2">
             {[1, 2, 3].map(i => (
-              <div key={i} className="h-10 bg-gray-200 rounded-lg animate-pulse" />
+              <div key={i} className="h-10 rounded-xl shimmer-bg" />
             ))}
           </div>
         ) : sessions.length === 0 ? (
-          <p className="px-3 py-4 text-xs text-gray-400 text-center">No chats yet</p>
+          <p className="px-3 py-4 text-xs text-gray-500 text-center">No chats yet</p>
         ) : (
           sessions.map(session => (
             <div key={session.id} className="relative group px-2">
               <Link
                 href={`/chat/${session.id}`}
                 onClick={handleSelectSession}
-                className={`flex flex-col px-3 py-2.5 rounded-lg text-left w-full transition-colors ${
+                className={`flex flex-col px-3 py-2.5 rounded-xl text-left w-full transition-colors ${
                   session.id === activeSessionId
-                    ? 'bg-indigo-100 text-indigo-900'
-                    : 'text-gray-700 hover:bg-gray-200'
+                    ? 'text-white'
+                    : 'text-gray-400 hover:text-gray-200 hover:bg-white/5'
                 }`}
+                style={session.id === activeSessionId ? {
+                  background: 'rgba(109,94,245,0.15)',
+                  border: '1px solid rgba(109,94,245,0.25)',
+                } : undefined}
               >
                 <span className="text-xs font-medium truncate leading-snug">
                   {session.title || 'Untitled chat'}
                 </span>
                 <div className="flex items-center justify-between mt-0.5">
                   {session.last_message && (
-                    <span className="text-xs text-gray-400 truncate flex-1 mr-2">
+                    <span className="text-xs text-gray-600 truncate flex-1 mr-2">
                       {session.last_message}
                     </span>
                   )}
-                  <span className="text-xs text-gray-400 shrink-0">
+                  <span className="text-xs text-gray-600 shrink-0">
                     {relativeTime(session.updated_at)}
                   </span>
                 </div>
@@ -112,7 +119,7 @@ export default function ChatSidebar({ activeSessionId, refreshKey, isOpen, onClo
               {/* Delete button — revealed on hover */}
               <button
                 onClick={(e) => handleDelete(e, session.id)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-500 w-6 h-6 flex items-center justify-center rounded text-xs"
+                className="absolute right-3 top-1/2 -translate-y-1/2 opacity-0 group-hover:opacity-100 transition-opacity text-gray-600 hover:text-red-400 w-6 h-6 flex items-center justify-center rounded text-xs"
                 title="Delete chat"
               >
                 🗑
@@ -123,11 +130,11 @@ export default function ChatSidebar({ activeSessionId, refreshKey, isOpen, onClo
       </div>
 
       {/* Dashboard link */}
-      <div className="p-3 border-t border-gray-200">
+      <div className="p-3" style={{ borderTop: '1px solid rgba(255,255,255,0.08)' }}>
         <Link
           href="/dashboard"
           onClick={onClose}
-          className="flex items-center gap-2 px-3 py-2 text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-200 rounded-lg transition-colors"
+          className="flex items-center gap-2 px-3 py-2 text-sm text-gray-500 hover:text-gray-200 hover:bg-white/5 rounded-xl transition-colors"
         >
           <span>←</span>
           <span>Dashboard</span>

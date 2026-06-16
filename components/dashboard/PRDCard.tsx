@@ -8,19 +8,24 @@ interface PRDCardProps {
   onDelete: () => void;
 }
 
-function statusClasses(status: PRDSession['status']) {
-  if (status === 'complete') return 'bg-green-100 text-green-700';
-  if (status === 'generating') return 'bg-yellow-100 text-yellow-700';
-  return 'bg-gray-100 text-gray-700';
-}
+const statusDot: Record<PRDSession['status'], string> = {
+  complete:     'bg-success',
+  generating:   'bg-warning animate-pulse',
+  interviewing: 'bg-primary animate-pulse',
+};
+const statusLabel: Record<PRDSession['status'], string> = {
+  complete:     'Complete',
+  generating:   'Generating',
+  interviewing: 'Interview',
+};
 
-function relativeDate(dateStr: string) {
-  const diff = Date.now() - new Date(dateStr).getTime();
+function relativeDate(d: string) {
+  const diff = Date.now() - new Date(d).getTime();
   const days = Math.floor(diff / 86400000);
   if (days === 0) return 'Today';
   if (days === 1) return 'Yesterday';
-  if (days < 7) return `${days} days ago`;
-  return new Date(dateStr).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
+  if (days < 7) return `${days}d ago`;
+  return new Date(d).toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
 export default function PRDCard({ session, onDelete }: PRDCardProps) {
@@ -28,37 +33,53 @@ export default function PRDCard({ session, onDelete }: PRDCardProps) {
 
   const handleDelete = (e: React.MouseEvent) => {
     e.preventDefault();
-    if (confirm('Delete this PRD? This cannot be undone.')) {
-      onDelete();
-    }
+    if (confirm('Delete this PRD? This cannot be undone.')) onDelete();
   };
 
   return (
     <div className="relative group">
       <Link
         href={href}
-        className="block rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
+        className="block rounded-2xl p-5 transition-all duration-200"
+        style={{
+          background: 'rgba(255,255,255,0.03)',
+          border: '1px solid rgba(255,255,255,0.07)',
+        }}
+        onMouseEnter={e => {
+          const el = e.currentTarget as HTMLElement;
+          el.style.borderColor = 'rgba(109,94,245,0.30)';
+          el.style.transform = 'translateY(-2px)';
+          el.style.boxShadow = '0 8px 30px rgba(0,0,0,0.3)';
+        }}
+        onMouseLeave={e => {
+          const el = e.currentTarget as HTMLElement;
+          el.style.borderColor = 'rgba(255,255,255,0.07)';
+          el.style.transform = 'translateY(0)';
+          el.style.boxShadow = 'none';
+        }}
       >
-        <div className="mb-3 flex items-start justify-between gap-3 pr-6">
-          <h2 className="line-clamp-2 text-base font-semibold text-gray-900">
+        <div className="flex items-start justify-between gap-3 mb-3 pr-5">
+          <h2 className="text-sm font-semibold text-white line-clamp-2 leading-snug">
             {session.title || 'Untitled PRD'}
           </h2>
-          <span className={`shrink-0 rounded-full px-2.5 py-1 text-xs font-medium ${statusClasses(session.status)}`}>
-            {session.status}
+          <span className="flex items-center gap-1.5 shrink-0 text-xs font-medium"
+            style={{ color: session.status === 'complete' ? '#34D399' : session.status === 'generating' ? '#FBBF24' : '#8B7CFF' }}>
+            <span className={`w-1.5 h-1.5 rounded-full ${statusDot[session.status]}`} />
+            {statusLabel[session.status]}
           </span>
         </div>
-        <p className="line-clamp-2 text-sm text-gray-500 mb-4">{session.initial_input}</p>
-        <div className="flex items-center justify-between text-xs text-gray-400">
-          <span>{relativeDate(session.created_at)}</span>
-          <span className="font-medium text-indigo-600">
+        <p className="text-xs text-gray-500 line-clamp-2 mb-4">{session.initial_input}</p>
+        <div className="flex items-center justify-between text-xs">
+          <span className="text-gray-600">{relativeDate(session.created_at)}</span>
+          <span className="text-primary font-medium">
             {session.status === 'complete' ? 'View PRD →' : 'Continue →'}
           </span>
         </div>
       </Link>
       <button
         onClick={handleDelete}
-        className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity text-gray-400 hover:text-red-500 text-sm w-6 h-6 flex items-center justify-center rounded"
-        title="Delete PRD"
+        className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity text-gray-600 hover:text-danger w-5 h-5 flex items-center justify-center rounded text-xs"
+        title="Delete"
       >
         ✕
       </button>
