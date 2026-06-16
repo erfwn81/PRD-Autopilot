@@ -1,16 +1,21 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Button from '@/components/ui/Button';
 import Textarea from '@/components/ui/Textarea';
 
 interface InitialInputProps {
   onSubmit: (input: string) => void;
   loading?: boolean;
+  initialValue?: string;
 }
 
-export default function InitialInput({ onSubmit, loading }: InitialInputProps) {
+export default function InitialInput({ onSubmit, loading, initialValue }: InitialInputProps) {
   const [input, setInput] = useState('');
+
+  useEffect(() => {
+    if (initialValue) setInput(initialValue);
+  }, [initialValue]);
 
   const handleSubmit = () => {
     if (input.trim().length < 20) return;

@@ -126,3 +126,8 @@ body {
     box-shadow: 0 0 0 3px rgba(109,94,245,0.15);
   }
 }
+
+@keyframes shimmer {
+  0%   { background-position: 100% 0; }
+  100% { background-position: -100% 0; }
+}
