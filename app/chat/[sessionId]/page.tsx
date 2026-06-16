@@ -31,7 +31,7 @@ export default function ChatPage() {
   }, []);
 
   return (
-    <div className="flex h-screen overflow-hidden">
+    <div className="flex h-screen overflow-hidden" style={{ background: 'var(--background)' }}>
       <ChatSidebar
         activeSessionId={sessionId}
         refreshKey={refreshKey}
