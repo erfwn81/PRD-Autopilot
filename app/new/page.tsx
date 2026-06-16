@@ -1,14 +1,21 @@
 'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
+import { useState, useEffect, Suspense } from 'react';
+import { useRouter, useSearchParams } from 'next/navigation';
 import Header from '@/components/layout/Header';
 import InitialInput from '@/components/interview/InitialInput';
 
-export default function NewPage() {
+function NewPageInner() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
+  const [prefillIdea, setPrefillIdea] = useState('');
+
+  useEffect(() => {
+    const ideaParam = searchParams.get('idea');
+    if (ideaParam) setPrefillIdea(decodeURIComponent(ideaParam));
+  }, [searchParams]);
 
   const handleSubmit = async (initialInput: string) => {
     setLoading(true);
@@ -48,8 +55,23 @@ export default function NewPage() {
             {error}
           </div>
         )}
-        <InitialInput onSubmit={handleSubmit} loading={loading} />
+        <InitialInput onSubmit={handleSubmit} loading={loading} initialValue={prefillIdea} />
       </main>
     </div>
+  );
+}
+
+export default function NewPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-50">
+        <Header />
+        <main className="mx-auto max-w-2xl px-4 py-8 sm:py-16">
+          <div className="h-48 rounded-xl bg-gray-100 animate-pulse" />
+        </main>
+      </div>
+    }>
+      <NewPageInner />
+    </Suspense>
   );
 }

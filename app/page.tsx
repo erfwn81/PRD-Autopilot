@@ -136,6 +136,16 @@ export default function HomePage() {
               title: 'AI PM Chat',
               desc: 'Chat with an expert product manager coach. Get help with prioritization, roadmaps, stakeholder management, and product strategy — link your PRD for specific advice.',
             },
+            {
+              icon: '🔍',
+              title: 'Idea Validation',
+              desc: 'Validate a startup idea with live web research — market size, competitors, target customer, risks, SWOT, and a go/no-go verdict. Know before you build.',
+            },
+            {
+              icon: '📊',
+              title: 'Pitch Deck Generator',
+              desc: 'Turn your idea or PRD into a structured 10-slide investor pitch deck. Link your validation report for market-grounded slides.',
+            },
           ].map((feat) => (
             <div key={feat.title} className="bg-white rounded-2xl border border-gray-200 shadow-sm p-6">
               <div className="text-2xl mb-3">{feat.icon}</div>
