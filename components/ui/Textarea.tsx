@@ -9,16 +9,21 @@ interface TextareaProps extends TextareaHTMLAttributes<HTMLTextAreaElement> {
 
 const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   ({ label, error, className = '', ...props }, ref) => (
-    <div className="flex flex-col gap-1">
-      {label && <label className="text-sm font-medium text-gray-700">{label}</label>}
+    <div className="flex flex-col gap-1.5">
+      {label && (
+        <label className="text-xs font-medium uppercase tracking-widest text-gray-500">
+          {label}
+        </label>
+      )}
       <textarea
         ref={ref}
-        className={`w-full rounded-lg border px-3 py-2 text-sm shadow-sm transition-colors focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none ${
-          error ? 'border-red-400' : 'border-gray-300 focus:border-indigo-400'
+        className={`w-full rounded-xl bg-surface-2 border px-4 py-3 text-sm text-gray-100 placeholder-gray-600 transition-all resize-none focus:outline-none focus:ring-2 focus:ring-primary/40 focus:border-primary/60 ${
+          error ? 'border-danger/60' : 'border-white/8'
         } ${className}`}
+        style={{ borderColor: error ? undefined : 'rgba(255,255,255,0.08)' }}
         {...props}
       />
-      {error && <p className="text-xs text-red-600">{error}</p>}
+      {error && <p className="text-xs text-danger">{error}</p>}
     </div>
   )
 );

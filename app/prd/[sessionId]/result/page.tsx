@@ -196,15 +196,22 @@ export default function ResultPage() {
 
   if (loading || swarmLoading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex flex-col items-center justify-center gap-6 px-4">
-        <LoadingSpinner />
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-6 px-4"
+        style={{ background: `radial-gradient(ellipse 60% 50% at 50% 40%, rgba(109,94,245,0.10) 0%, transparent 70%), #0A0A0F` }}>
+        <LoadingSpinner size="lg" />
         <div className="text-center">
-          <p className="text-lg font-semibold text-gray-900 mb-1">
+          <p className="text-lg font-semibold text-white mb-2">
             {swarmLoading ? 'Re-generating with AI Agents' : 'Building your PRD'}
           </p>
-          <p className="text-gray-500 text-sm animate-pulse">
+          <p className="text-sm text-gray-500 animate-pulse">
             {swarmLoading ? swarmMsg : loadingMsg}
           </p>
+        </div>
+        <div className="flex gap-2 mt-1">
+          {Array.from({ length: 5 }).map((_, i) => (
+            <div key={i} className="w-2 h-2 rounded-full animate-pulse-slow"
+              style={{ background: '#6D5EF5', animationDelay: `${i * 200}ms` }} />
+          ))}
         </div>
       </div>
     );
@@ -212,13 +219,14 @@ export default function ResultPage() {
 
   if (error) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-background">
         <Header />
         <main className="mx-auto max-w-2xl px-4 py-16">
-          <div className="rounded-lg bg-red-50 border border-red-200 px-6 py-8 text-center">
-            <p className="text-red-700 font-medium mb-2">PRD generation failed</p>
-            <p className="text-red-600 text-sm">{error}</p>
-            <a href="/new" className="mt-4 inline-block text-sm text-indigo-600 hover:underline">
+          <div className="rounded-2xl px-8 py-10 text-center"
+            style={{ background: 'rgba(248,113,113,0.06)', border: '1px solid rgba(248,113,113,0.20)' }}>
+            <p className="text-danger font-semibold mb-2">PRD generation failed</p>
+            <p className="text-gray-400 text-sm mb-6">{error}</p>
+            <a href="/new" className="btn-primary text-sm px-5 py-2.5 rounded-xl inline-flex">
               Start over
             </a>
           </div>
@@ -231,26 +239,28 @@ export default function ResultPage() {
 
   const currentPrd = livePrd ?? prd;
 
-  const btnBase = 'text-xs px-3 py-1.5 rounded-lg border border-gray-300 text-gray-700 hover:bg-gray-50 transition-colors disabled:opacity-50';
+  const btnBase = 'text-xs px-3 py-1.5 rounded-lg text-gray-400 hover:text-white transition-colors disabled:opacity-50';
+  const btnStyle = { background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.10)' };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-background">
       <ExportBar prd={currentPrd} />
 
-      {/* New actions bar */}
-      <div className="sticky top-[57px] z-10 bg-white/95 backdrop-blur border-b border-gray-100">
-        <div className="mx-auto max-w-4xl px-4 py-2 flex items-center gap-2 flex-wrap">
-          <button onClick={handleRegenerate} disabled={swarmLoading} className={btnBase}>
-            Re-generate (Multi-Agent)
+      {/* Actions bar */}
+      <div className="sticky top-[57px] z-10 border-b"
+        style={{ background: 'rgba(10,10,15,0.90)', backdropFilter: 'blur(16px)', borderColor: 'rgba(255,255,255,0.06)' }}>
+        <div className="mx-auto max-w-4xl px-4 py-2.5 flex items-center gap-2 flex-wrap">
+          <button onClick={handleRegenerate} disabled={swarmLoading} className={btnBase} style={btnStyle}>
+            ⚡ Re-generate
           </button>
-          <button onClick={handleScore} disabled={scoreLoading} className={btnBase}>
-            {scoreLoading ? 'Scoring...' : score ? 'Rescore PRD' : 'Score this PRD'}
+          <button onClick={handleScore} disabled={scoreLoading} className={btnBase} style={btnStyle}>
+            {scoreLoading ? 'Scoring…' : score ? 'Rescore' : '📊 Score PRD'}
           </button>
-          <button onClick={handleShare} disabled={shareLoading} className={btnBase}>
+          <button onClick={handleShare} disabled={shareLoading} className={btnBase} style={btnStyle}>
             {shareLoading ? 'Creating link...' : 'Share for Review'}
           </button>
-          <button onClick={handleBreakdown} disabled={ticketLoading} className={btnBase}>
-            {ticketLoading ? 'Breaking down...' : 'Break into Tickets'}
+          <button onClick={handleBreakdown} disabled={ticketLoading} className={btnBase} style={btnStyle}>
+            {ticketLoading ? 'Breaking down…' : '🎫 Tickets'}
           </button>
         </div>
       </div>
