@@ -239,31 +239,19 @@ export default function ResultPage() {
 
   const currentPrd = livePrd ?? prd;
 
-  const btnBase = 'text-xs px-3 py-1.5 rounded-lg text-gray-400 hover:text-white transition-colors disabled:opacity-50';
-  const btnStyle = { background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.10)' };
-
   return (
     <div className="min-h-screen bg-background">
-      <ExportBar prd={currentPrd} />
-
-      {/* Actions bar */}
-      <div className="sticky top-[57px] z-10 border-b"
-        style={{ background: 'rgba(10,10,15,0.90)', backdropFilter: 'blur(16px)', borderColor: 'rgba(255,255,255,0.06)' }}>
-        <div className="mx-auto max-w-4xl px-4 py-2.5 flex items-center gap-2 flex-wrap">
-          <button onClick={handleRegenerate} disabled={swarmLoading} className={btnBase} style={btnStyle}>
-            ⚡ Re-generate
-          </button>
-          <button onClick={handleScore} disabled={scoreLoading} className={btnBase} style={btnStyle}>
-            {scoreLoading ? 'Scoring…' : score ? 'Rescore' : '📊 Score PRD'}
-          </button>
-          <button onClick={handleShare} disabled={shareLoading} className={btnBase} style={btnStyle}>
-            {shareLoading ? 'Creating link...' : 'Share for Review'}
-          </button>
-          <button onClick={handleBreakdown} disabled={ticketLoading} className={btnBase} style={btnStyle}>
-            {ticketLoading ? 'Breaking down…' : '🎫 Tickets'}
-          </button>
-        </div>
-      </div>
+      <ExportBar
+        prd={currentPrd}
+        onRegenerate={handleRegenerate}
+        onScore={handleScore}
+        onShare={handleShare}
+        onBreakdown={handleBreakdown}
+        swarmLoading={swarmLoading}
+        scoreLoading={scoreLoading}
+        shareLoading={shareLoading}
+        ticketLoading={ticketLoading}
+      />
 
       <main className="mx-auto max-w-4xl px-4 py-8 space-y-4">
         {score && <ScoringWidget score={score} />}
