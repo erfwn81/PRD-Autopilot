@@ -1,4 +1,3 @@
-````md
 # PRD Autopilot
 
 > Turn ideas into engineering ready PRDs, validation reports, and investor pitch decks in minutes.
@@ -93,7 +92,7 @@ Export documents to:
 
 ## Workflow
 
-```text
+
 Idea
 ↓
 Validation Report
