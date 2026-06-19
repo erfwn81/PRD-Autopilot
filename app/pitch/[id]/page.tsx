@@ -136,6 +136,12 @@ export default function PitchDeckPage() {
       md.push('');
     }
     navigator.clipboard.writeText(md.join('\n')).then(() => {
+      window.pendo?.track('pitch_deck_exported', {
+        deck_id: deckId,
+        export_format: 'markdown',
+        slide_count: deck.slides.length,
+        deck_title: deck.title,
+      });
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     });
@@ -150,6 +156,12 @@ export default function PitchDeckPage() {
     a.download = `${deck.title.replace(/\s+/g, '-').toLowerCase()}.json`;
     a.click();
     URL.revokeObjectURL(url);
+    window.pendo?.track('pitch_deck_exported', {
+      deck_id: deckId,
+      export_format: 'json',
+      slide_count: deck.slides.length,
+      deck_title: deck.title,
+    });
   };
 
   const handleDelete = async () => {

@@ -34,6 +34,11 @@ function SectionComments({ shareToken, sectionKey }: SectionCommentProps) {
       });
       const data = await res.json();
       if (data.comment) {
+        window.pendo?.track('prd_comment_submitted', {
+          share_token: shareToken,
+          section_key: sectionKey,
+          comment_length: content.trim().length,
+        });
         setComments((prev) => [...prev, data.comment]);
         setContent('');
       }

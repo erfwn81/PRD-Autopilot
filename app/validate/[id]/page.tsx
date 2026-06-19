@@ -154,7 +154,15 @@ export default function ValidationReportPage() {
         {/* Action bar */}
         <div className="flex items-center gap-3 mb-8 flex-wrap">
           <button
-            onClick={() => router.push(`/new?idea=${encodeURIComponent(report.idea_input)}`)}
+            onClick={() => {
+              window.pendo?.track('validation_to_prd_initiated', {
+                report_id: reportId,
+                idea_input_length: report.idea_input.length,
+                verdict_score: report.verdict?.score,
+                verdict_recommendation: report.verdict?.recommendation,
+              });
+              router.push(`/new?idea=${encodeURIComponent(report.idea_input)}`);
+            }}
             className="btn-primary px-4 py-2 rounded-xl text-sm"
           >
             Turn into PRD →

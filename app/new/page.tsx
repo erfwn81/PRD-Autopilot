@@ -34,6 +34,11 @@ function NewPageInner() {
       }
 
       const { sessionId, question, questionNumber } = await res.json();
+      window.pendo?.track('interview_started', {
+        session_id: sessionId,
+        initial_input_length: initialInput.length,
+        has_prefilled_idea: !!prefillIdea,
+      });
       sessionStorage.setItem(`prd_q_${sessionId}`, JSON.stringify({ question, questionNumber }));
       router.push(`/prd/${sessionId}`);
     } catch (err) {

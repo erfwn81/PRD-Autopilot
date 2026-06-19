@@ -26,6 +26,11 @@ export default function SignupPage() {
       return;
     }
 
+    const requiresConfirmation = !data.session;
+    window.pendo?.track('user_signed_up', {
+      requires_email_confirmation: requiresConfirmation,
+    });
+
     if (data.session) {
       router.push('/dashboard');
       return;

@@ -69,6 +69,10 @@ export default function InterviewPage() {
         const data = await res.json();
 
         if (data.done) {
+          window.pendo?.track('interview_completed', {
+            session_id: sessionId,
+            total_questions_answered: questionNumber,
+          });
           setLoading(false);
           setGenerating(true);
           const genRes = await fetch('/api/prd/generate-swarm', {
@@ -80,6 +84,10 @@ export default function InterviewPage() {
             const errData = await genRes.json();
             throw new Error(errData.error ?? 'PRD generation failed');
           }
+          window.pendo?.track('prd_generated', {
+            session_id: sessionId,
+            generation_method: 'swarm',
+          });
           router.push(`/prd/${sessionId}/result`);
         } else {
           sessionStorage.setItem(
