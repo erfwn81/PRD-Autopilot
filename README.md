@@ -92,7 +92,7 @@ Export documents to:
 
 ## Workflow
 
-
+```text
 Idea
 ↓
 Validation Report
