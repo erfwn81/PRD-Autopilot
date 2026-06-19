@@ -2,6 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useRouter } from 'next/navigation';
+import Link from 'next/link';
 import { createClient } from '@/lib/supabase/client';
 import ChatWindow from './ChatWindow';
 import ChatInput, { type SendParams } from './ChatInput';
@@ -171,31 +172,44 @@ export default function ChatView({ sessionId: propSessionId, onToggleSidebar, on
   return (
     <div className="flex flex-col h-full">
       {/* Top bar */}
-      <div className="shrink-0 bg-white border-b border-gray-200 px-4 h-14 flex items-center justify-between">
+      <div
+        className="shrink-0 px-4 h-14 flex items-center justify-between"
+        style={{ background: 'var(--surface)', borderBottom: '1px solid rgba(255,255,255,0.08)' }}
+      >
         <div className="flex items-center gap-3">
           {/* Hamburger — mobile only */}
           <button
             onClick={onToggleSidebar}
-            className="md:hidden text-gray-500 hover:text-gray-700 p-1.5 rounded-lg hover:bg-gray-100 transition-colors"
+            className="md:hidden text-gray-500 hover:text-gray-300 p-1.5 rounded-lg hover:bg-white/5 transition-colors"
             aria-label="Toggle sidebar"
           >
             <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
             </svg>
           </button>
-          <span className="text-sm font-semibold text-gray-900 truncate max-w-[200px] sm:max-w-xs">
+          <Link
+            href="/dashboard"
+            className="hidden md:flex items-center gap-1 text-xs text-gray-500 hover:text-gray-200 transition-colors mr-1"
+          >
+            ← Dashboard
+          </Link>
+          <span className="text-sm font-semibold text-white truncate max-w-[200px] sm:max-w-xs">
             {title}
           </span>
         </div>
         <div className="flex items-center gap-2">
           {linkedPrd && (
-            <span className="text-xs text-indigo-600 bg-indigo-50 px-2 py-1 rounded-full hidden sm:block">
+            <span
+              className="text-xs px-2 py-1 rounded-full hidden sm:block"
+              style={{ background: 'rgba(109,94,245,0.12)', border: '1px solid rgba(109,94,245,0.20)', color: '#8B7CFF' }}
+            >
               PRD: {linkedPrd.title.slice(0, 20)}
             </span>
           )}
           <button
             onClick={openPrdModal}
-            className="text-xs border border-gray-300 px-3 py-1.5 rounded-lg hover:bg-gray-50 text-gray-700 transition-colors"
+            className="text-xs text-gray-400 hover:text-gray-200 px-3 py-1.5 rounded-lg transition-colors"
+            style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
           >
             {linkedPrd ? 'Change PRD' : 'Link PRD'}
           </button>
@@ -204,7 +218,12 @@ export default function ChatView({ sessionId: propSessionId, onToggleSidebar, on
 
       {error && (
         <div className="mx-auto max-w-2xl w-full px-4 mt-2">
-          <div className="bg-red-50 border border-red-200 rounded-lg px-4 py-2 text-sm text-red-700">{error}</div>
+          <div
+            className="rounded-lg px-4 py-2 text-sm text-red-300"
+            style={{ background: 'rgba(248,113,113,0.08)', border: '1px solid rgba(248,113,113,0.20)' }}
+          >
+            {error}
+          </div>
         </div>
       )}
 
@@ -226,22 +245,28 @@ export default function ChatView({ sessionId: propSessionId, onToggleSidebar, on
 
       {/* PRD picker modal */}
       {prdModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-          <div className="bg-white rounded-xl shadow-xl w-full max-w-md p-6 max-h-[60vh] flex flex-col">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60">
+          <div
+            className="rounded-xl shadow-2xl w-full max-w-md p-6 max-h-[60vh] flex flex-col"
+            style={{ background: 'var(--surface-2)', border: '1px solid rgba(255,255,255,0.10)' }}
+          >
             <div className="flex justify-between items-center mb-4">
-              <h3 className="font-semibold text-gray-900">Link a PRD</h3>
-              <button onClick={() => setPrdModalOpen(false)} className="text-gray-400 hover:text-gray-600">×</button>
+              <h3 className="font-semibold text-white">Link a PRD</h3>
+              <button onClick={() => setPrdModalOpen(false)} className="text-gray-500 hover:text-gray-300 transition-colors">×</button>
             </div>
-            <p className="text-sm text-gray-500 mb-4">The AI will use your PRD as context for advice.</p>
+            <p className="text-sm text-gray-400 mb-4">The AI will use your PRD as context for advice.</p>
             <div className="overflow-y-auto flex-1 space-y-2">
               {prdSessions.length === 0 && (
-                <p className="text-sm text-gray-400 text-center py-4">No completed PRDs found.</p>
+                <p className="text-sm text-gray-500 text-center py-4">No completed PRDs found.</p>
               )}
               {prdSessions.map(s => (
                 <button
                   key={s.id}
                   onClick={() => handleLinkPrd(s)}
-                  className="w-full text-left px-4 py-3 rounded-lg border border-gray-200 hover:border-indigo-400 hover:bg-indigo-50 transition-colors text-sm text-gray-900"
+                  className="w-full text-left px-4 py-3 rounded-lg text-sm text-gray-300 hover:text-white transition-colors"
+                  style={{ background: 'rgba(255,255,255,0.04)', border: '1px solid rgba(255,255,255,0.08)' }}
+                  onMouseEnter={e => (e.currentTarget.style.borderColor = 'rgba(109,94,245,0.40)')}
+                  onMouseLeave={e => (e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)')}
                 >
                   {s.title}
                 </button>
@@ -250,7 +275,7 @@ export default function ChatView({ sessionId: propSessionId, onToggleSidebar, on
             {linkedPrd && (
               <button
                 onClick={() => { setLinkedPrd(null); setPrdModalOpen(false); }}
-                className="mt-3 text-sm text-red-600 hover:underline text-center w-full"
+                className="mt-3 text-sm text-red-400 hover:text-red-300 hover:underline text-center w-full transition-colors"
               >
                 Remove PRD link
               </button>

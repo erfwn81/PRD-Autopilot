@@ -57,7 +57,7 @@ export default function ValidationCard({ report, onDelete }: ValidationCardProps
       </Link>
       <button
         onClick={handleDelete}
-        className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity text-gray-600 hover:text-red-400 text-sm w-6 h-6 flex items-center justify-center rounded"
+        className="absolute top-3 right-3 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity text-gray-600 hover:text-red-400 text-sm w-6 h-6 flex items-center justify-center rounded"
         title="Delete report"
       >
         ✕

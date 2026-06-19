@@ -222,6 +222,9 @@ export default function PRDDocument({ prd: initialPrd, onSectionSave, onPrdChang
             <PRDSection
               title="9. Phased Rollout Plan"
               content=""
+              sectionType="rollout"
+              structuredValue={prd.rollout_plan}
+              onStructuredSave={handleSave('rollout_plan')}
               renderContent={() => (
                 <div className="grid gap-4 sm:grid-cols-3">
                   {[

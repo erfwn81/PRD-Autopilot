@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from 'react';
 import { useParams } from 'next/navigation';
+import Link from 'next/link';
 import Header from '@/components/layout/Header';
 import PRDDocument from '@/components/prd/PRDDocument';
 import ExportBar from '@/components/prd/ExportBar';
@@ -253,7 +254,25 @@ export default function ResultPage() {
         ticketLoading={ticketLoading}
       />
 
-      <main className="mx-auto max-w-4xl px-4 py-8 space-y-4">
+      {/* Navigation strip — always visible, not inside Actions dropdown */}
+      <div className="mx-auto max-w-4xl px-4 pt-5 pb-0 flex items-center gap-2">
+        <Link
+          href="/dashboard"
+          className="text-xs text-gray-400 hover:text-gray-200 transition-colors flex items-center gap-1.5 px-3 py-1.5 rounded-lg"
+          style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
+        >
+          ← Dashboard
+        </Link>
+        <Link
+          href="/new"
+          className="text-xs text-gray-400 hover:text-gray-200 transition-colors flex items-center gap-1.5 px-3 py-1.5 rounded-lg"
+          style={{ background: 'rgba(255,255,255,0.05)', border: '1px solid rgba(255,255,255,0.08)' }}
+        >
+          New PRD
+        </Link>
+      </div>
+
+      <main className="mx-auto max-w-4xl px-4 py-6 space-y-4">
         {score && <ScoringWidget score={score} />}
         <PRDDocument
           prd={prd}

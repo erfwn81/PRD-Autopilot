@@ -33,8 +33,12 @@ const severityColor = { high: '#EF4444', medium: '#F59E0B', low: '#22C55E' };
 
 function SectionError() {
   return (
-    <div className="rounded-xl px-4 py-3 text-sm text-gray-500" style={{ border: '1px dashed rgba(255,255,255,0.10)' }}>
-      This section could not be generated. Try regenerating the report.
+    <div
+      className="rounded-xl px-4 py-3 text-sm flex items-center gap-2"
+      style={{ background: 'rgba(251,191,36,0.06)', border: '1px solid rgba(251,191,36,0.20)', color: '#D97706' }}
+    >
+      <span className="shrink-0">⚠</span>
+      <span>This section could not be generated. Try regenerating the report.</span>
     </div>
   );
 }

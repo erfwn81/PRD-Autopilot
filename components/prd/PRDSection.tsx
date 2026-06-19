@@ -8,7 +8,7 @@ interface PRDSectionProps {
   renderContent?: () => React.ReactNode;
   onSave?: (value: string) => Promise<void>;
   sectionType?: 'text' | 'personas' | 'jtbd' | 'stories' | 'criteria' |
-                'edge_cases' | 'out_of_scope' | 'metrics' | 'rollout' | 'questions';
+                'edge_cases' | 'out_of_scope' | 'metrics' | 'rollout' | 'questions' | 'rollout_plan';
   structuredValue?: unknown;
   onStructuredSave?: (value: unknown) => Promise<void>;
 }
@@ -169,6 +169,9 @@ function StructuredEditor({ sectionType, value, onSave, onCancel, saving }: Stru
       return <EdgeCasesEditor value={value as EdgeCaseItem[]} onSave={onSave} onCancel={onCancel} saving={saving} />;
     case 'metrics':
       return <MetricsEditor value={value as MetricItem[]} onSave={onSave} onCancel={onCancel} saving={saving} />;
+    case 'rollout':
+    case 'rollout_plan':
+      return <RolloutEditor value={value as RolloutPlan} onSave={onSave} onCancel={onCancel} saving={saving} />;
     case 'questions':
       return <QuestionsEditor value={value as QuestionItem[]} onSave={onSave} onCancel={onCancel} saving={saving} />;
     default:
@@ -226,6 +229,8 @@ interface CriteriaItem { story_ref: string; criteria: string[]; }
 interface EdgeCaseItem { scenario: string; expected_behavior: string; }
 interface MetricItem { metric: string; target: string; measurement_method: string; timeframe: string; }
 interface QuestionItem { question: string; owner: string; impact: string; }
+interface RolloutPhase { name: string; duration: string; features: string[]; success_criteria: string; }
+interface RolloutPlan { phase_1: RolloutPhase; phase_2: RolloutPhase; phase_3: RolloutPhase; }
 
 // ── String array editor (JTBD, Out of Scope) ──────────────────────────────────
 
@@ -444,6 +449,63 @@ function MetricsEditor({ value, onSave, onCancel, saving }: {
       ))}
       <button onClick={add} className="text-xs text-indigo-600 hover:text-indigo-800 font-medium">+ Add metric</button>
       <SaveCancel onSave={() => onSave(items)} onCancel={onCancel} saving={saving} />
+    </div>
+  );
+}
+
+// ── Rollout plan editor ───────────────────────────────────────────────────────
+
+function RolloutEditor({ value, onSave, onCancel, saving }: {
+  value: RolloutPlan;
+  onSave: (v: unknown) => Promise<void>;
+  onCancel: () => void;
+  saving: boolean;
+}) {
+  const emptyPhase = (): RolloutPhase => ({ name: '', duration: '', features: [''], success_criteria: '' });
+  const [plan, setPlan] = useState<RolloutPlan>(value ?? {
+    phase_1: emptyPhase(), phase_2: emptyPhase(), phase_3: emptyPhase(),
+  });
+
+  const updatePhase = (key: keyof RolloutPlan, field: keyof RolloutPhase, v: string) =>
+    setPlan(p => ({ ...p, [key]: { ...p[key], [field]: v } }));
+  const updateFeature = (key: keyof RolloutPlan, i: number, v: string) =>
+    setPlan(p => ({ ...p, [key]: { ...p[key], features: p[key].features.map((f, idx) => idx === i ? v : f) } }));
+  const addFeature = (key: keyof RolloutPlan) =>
+    setPlan(p => ({ ...p, [key]: { ...p[key], features: [...p[key].features, ''] } }));
+  const removeFeature = (key: keyof RolloutPlan, i: number) =>
+    setPlan(p => ({ ...p, [key]: { ...p[key], features: p[key].features.filter((_, idx) => idx !== i) } }));
+
+  const phaseKeys: (keyof RolloutPlan)[] = ['phase_1', 'phase_2', 'phase_3'];
+
+  return (
+    <div className="space-y-4">
+      {phaseKeys.map((key, idx) => {
+        const phase = plan[key];
+        return (
+          <div key={key} className="border border-gray-200 rounded-lg p-4">
+            <p className="text-xs font-semibold text-indigo-600 uppercase tracking-wide mb-3">Phase {idx + 1}</p>
+            <Field label="Name" value={phase.name} onChange={(v) => updatePhase(key, 'name', v)} />
+            <Field label="Duration" value={phase.duration} onChange={(v) => updatePhase(key, 'duration', v)} />
+            <div className="mb-2">
+              <label className="block text-xs font-medium text-gray-500 mb-1">Features</label>
+              {phase.features.map((f, i) => (
+                <div key={i} className="flex gap-2 items-start mb-1">
+                  <input
+                    type="text"
+                    value={f}
+                    onChange={(e) => updateFeature(key, i, e.target.value)}
+                    className="flex-1 border border-gray-200 rounded-lg px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-400"
+                  />
+                  <button onClick={() => removeFeature(key, i)} className="text-gray-400 hover:text-red-500 text-sm pt-2">✕</button>
+                </div>
+              ))}
+              <button onClick={() => addFeature(key)} className="text-xs text-indigo-600 hover:text-indigo-800">+ Add feature</button>
+            </div>
+            <Field label="Success criteria" value={phase.success_criteria} onChange={(v) => updatePhase(key, 'success_criteria', v)} multiline />
+          </div>
+        );
+      })}
+      <SaveCancel onSave={() => onSave(plan)} onCancel={onCancel} saving={saving} />
     </div>
   );
 }

@@ -60,7 +60,7 @@ export default function ChatCard({ session, onDelete }: ChatCardProps) {
         </div>
       </Link>
       <button onClick={handleDelete}
-        className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity text-gray-600 hover:text-danger w-5 h-5 flex items-center justify-center rounded text-xs"
+        className="absolute top-4 right-4 opacity-100 md:opacity-0 md:group-hover:opacity-100 transition-opacity text-gray-600 hover:text-danger w-5 h-5 flex items-center justify-center rounded text-xs"
         title="Delete">✕</button>
     </div>
   );
