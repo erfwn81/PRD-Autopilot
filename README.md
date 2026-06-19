@@ -1,36 +1,223 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+````md
+# PRD Autopilot
+
+> Turn ideas into engineering ready PRDs, validation reports, and investor pitch decks in minutes.
+
+PRD Autopilot is an AI powered founder platform that helps users validate startup ideas, generate Product Requirements Documents (PRDs), analyze product quality, create investor ready pitch decks, and collaborate with AI throughout the product development process.
+
+Built for **Mind the Product – World Product Day 2026 Hackathon**.
+
+---
+
+## Live Demo
+
+https://prd-autopilot.vercel.app
+
+---
+
+## Features
+
+### Idea Validation
+
+Validate startup ideas before building them using AI-powered:
+
+- Market research
+- Competitor analysis
+- SWOT analysis
+- Risk assessment
+- Customer profiling
+- Go / No-Go recommendations
+
+### AI Powered PRD Generation
+
+Users describe an idea and answer five targeted follow up questions.
+
+PRD Autopilot automatically generates:
+
+- Problem Statement
+- User Personas
+- Jobs To Be Done
+- User Stories
+- Acceptance Criteria
+- Edge Cases & Error States
+- Out of Scope
+- Success Metrics
+- Phased Rollout Plan
+- Open Questions
+
+### PRD Health Scoring
+
+Analyze generated PRDs and receive:
+
+- Quality scores
+- Gap analysis
+- Actionable recommendations
+- Improvement suggestions
+
+### Ticket & Backlog Generation
+
+Convert PRDs into structured product work items.
+
+### Pitch Deck Generator
+
+Automatically generate investor-ready pitch decks including:
+
+- Problem
+- Solution
+- Market Opportunity
+- Product
+- Business Model
+- Competition
+- Traction
+- Team
+- Funding Ask
+
+### AI Product Advisor
+
+Chat with an AI powered product advisor to:
+
+- Refine ideas
+- Improve PRDs
+- Brainstorm features
+- Explore product strategy
+
+### Exports
+
+Export documents to:
+
+- PDF
+- Markdown
+- Notion
+
+---
+
+## Workflow
+
+```text
+Idea
+↓
+Validation Report
+↓
+AI Interview
+↓
+PRD Generation
+↓
+PRD Health Score
+↓
+Ticket Generation
+↓
+Pitch Deck
+↓
+AI Product Advisor
+````
+
+---
+
+## Tech Stack
+
+### Frontend
+
+* Next.js 14
+* TypeScript
+* Tailwind CSS
+
+### Backend
+
+* Supabase
+* Groq API (Llama 3.3 70B)
+
+### Infrastructure
+
+* Vercel
+
+### Integrations
+
+* Notion API
+* Novus Analytics
+
+---
 
 ## Getting Started
 
-First, run the development server:
+### Prerequisites
+
+* Node.js 18+
+* npm
+
+### Installation
+
+```bash
+git clone https://github.com/erfwn81/PRD-Autopilot.git
+cd PRD-Autopilot
+npm install
+```
+
+### Environment Variables
+
+Create a `.env.local` file:
+
+```env
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
+GROQ_API_KEY=
+NOTION_API_KEY=
+NEXT_PUBLIC_APP_URL=
+```
+
+### Run Locally
 
 ```bash
 npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Then open:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+```text
+http://localhost:3000
+```
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+---
 
-## Learn More
+## Team
 
-To learn more about Next.js, take a look at the following resources:
+### Erfan Mirzaee
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Backend, AI Systems, Architecture, Deployment
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+### Elijah Rodriguez
 
-## Deploy on Vercel
+Frontend, Dashboard, UI/UX, Mobile Optimization
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### Esmeralda Amado
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+Authentication, QA Testing, Demo Video, Devpost Submission
+
+---
+
+## Hackathon
+
+Built for:
+
+**Mind the Product – World Product Day 2026**
+
+---
+
+## Links
+
+### Live Demo
+
+https://prd-autopilot.vercel.app
+
+### GitHub Repository
+
+https://github.com/erfwn81/PRD-Autopilot
+
+---
+
+## License
+
+MIT License
+
+```
+```
