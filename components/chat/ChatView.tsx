@@ -99,6 +99,16 @@ export default function ChatView({ sessionId: propSessionId, onToggleSidebar, on
         sessionIdRef.current = sid;
       }
 
+      const promptMessageId = crypto.randomUUID();
+      window.pendo?.trackAgent("prompt", {
+        agentId: "89TzTqgmw3HZRZkLOf584JSx47Q",
+        conversationId: sid!,
+        messageId: promptMessageId,
+        content: trimmed,
+        suggestedPrompt: false,
+        fileUploaded: Array.isArray(attachment_ids) && attachment_ids.length > 0,
+      });
+
       const res = await fetch('/api/chat/send', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -113,6 +123,14 @@ export default function ChatView({ sessionId: propSessionId, onToggleSidebar, on
 
       if (!res.ok) throw new Error('Failed to send message');
       const { message: assistantMsg } = await res.json();
+
+      window.pendo?.trackAgent("agent_response", {
+        agentId: "89TzTqgmw3HZRZkLOf584JSx47Q",
+        conversationId: sid!,
+        messageId: assistantMsg.id,
+        content: assistantMsg.content,
+        modelUsed: "llama-3.3-70b-versatile",
+      });
 
       setMessages(prev => {
         const withoutTemp = prev.filter(m => m.id !== tempId);
