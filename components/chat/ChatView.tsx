@@ -124,6 +124,15 @@ export default function ChatView({ sessionId: propSessionId, onToggleSidebar, on
       if (!res.ok) throw new Error('Failed to send message');
       const { message: assistantMsg } = await res.json();
 
+      window.pendo?.track('chat_message_sent', {
+        session_id: sid,
+        message_length: trimmed.length,
+        has_prd_context: !!linkedPrd,
+        has_attachments: Array.isArray(attachment_ids) && attachment_ids.length > 0,
+        attachment_count: attachment_ids?.length ?? 0,
+        is_first_message: wasNew,
+      });
+
       window.pendo?.trackAgent("agent_response", {
         agentId: "89TzTqgmw3HZRZkLOf584JSx47Q",
         conversationId: sid!,
@@ -182,6 +191,11 @@ export default function ChatView({ sessionId: propSessionId, onToggleSidebar, on
       : `Title: ${prdSession.title}`;
 
     setLinkedPrd({ title: prdSession.title, summary });
+    window.pendo?.track('chat_prd_linked', {
+      chat_session_id: sessionIdRef.current ?? '',
+      prd_session_id: prdSession.id,
+      prd_title: prdSession.title,
+    });
     setPrdModalOpen(false);
   };
 

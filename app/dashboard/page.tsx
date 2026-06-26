@@ -160,21 +160,25 @@ export default function DashboardPage() {
   const handleDeletePrd = async (id: string) => {
     const supabase = createClient();
     await supabase.from('prd_sessions').delete().eq('id', id);
+    window.pendo?.track('prd_deleted', { prd_id: id });
     setPrdSessions(prev => prev.filter(s => s.id !== id));
   };
 
   const handleDeleteChat = async (id: string) => {
     await fetch(`/api/chat/sessions/${id}`, { method: 'DELETE' });
+    window.pendo?.track('chat_session_deleted', { session_id: id });
     setChatSessions(prev => prev.filter(s => s.id !== id));
   };
 
   const handleDeleteValidation = async (id: string) => {
     await fetch(`/api/validation/${id}`, { method: 'DELETE' });
+    window.pendo?.track('validation_report_deleted', { report_id: id });
     setValidations(prev => prev.filter(v => v.id !== id));
   };
 
   const handleDeletePitch = async (id: string) => {
     await fetch(`/api/pitch/${id}`, { method: 'DELETE' });
+    window.pendo?.track('pitch_deck_deleted', { deck_id: id });
     setPitchDecks(prev => prev.filter(d => d.id !== id));
   };
 

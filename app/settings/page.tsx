@@ -58,6 +58,11 @@ export default function SettingsPage() {
     const supabase = createClient();
     const { error } = await supabase.auth.updateUser({ data: { display_name: displayName.trim() } });
     setNameSaving(false);
+    if (!error) {
+      window.pendo?.track('profile_display_name_updated', {
+        display_name_length: displayName.trim().length,
+      });
+    }
     setNameMsg(error ? { text: error.message, type: 'error' } : { text: 'Display name updated', type: 'success' });
     setTimeout(() => setNameMsg(null), 3500);
   };
@@ -79,6 +84,7 @@ export default function SettingsPage() {
     if (error) {
       setPwMsg({ text: error.message, type: 'error' });
     } else {
+      window.pendo?.track('password_changed');
       setPwMsg({ text: 'Password changed successfully', type: 'success' });
       setNewPassword('');
       setConfirmPassword('');
@@ -89,6 +95,7 @@ export default function SettingsPage() {
   const handleSignOutAll = async () => {
     if (!confirm('Sign out of all devices? You will be redirected to the home page.')) return;
     const supabase = createClient();
+    window.pendo?.track('signed_out_all_devices');
     await supabase.auth.signOut({ scope: 'global' });
     router.push('/');
   };

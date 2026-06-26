@@ -90,6 +90,13 @@ export default function PitchPage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? 'Generation failed');
+      window.pendo?.track('pitch_deck_generated', {
+        deck_id: data.deck_id,
+        source_mode: sourceMode,
+        prd_session_id: body.prd_session_id ?? '',
+        validation_id: body.validation_id ?? '',
+        slide_count: data.slide_count ?? 10,
+      });
       router.push(`/pitch/${data.deck_id}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong');

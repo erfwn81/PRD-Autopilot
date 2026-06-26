@@ -97,6 +97,13 @@ export default function ChatInput({ onSend, disabled, ensureSession }: ChatInput
         const res = await fetch('/api/chat/upload', { method: 'POST', body: form });
         if (!res.ok) throw new Error('Upload failed');
         const data = await res.json();
+        window.pendo?.track('chat_file_uploaded', {
+          session_id: sessionId,
+          file_name: file.name,
+          mime_type: file.type,
+          size_bytes: file.size,
+          is_text_file: !!data.text_content,
+        });
         setPending(prev => prev.map(p => p.localId === localId
           ? { ...p, uploading: false, id: data.attachment.id, text_content: data.text_content }
           : p));

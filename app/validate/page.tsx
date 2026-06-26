@@ -52,6 +52,10 @@ export default function ValidatePage() {
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? 'Generation failed');
+      window.pendo?.track('validation_report_generated', {
+        report_id: data.report_id,
+        idea_input_length: idea.trim().length,
+      });
       router.push(`/validate/${data.report_id}`);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Something went wrong');

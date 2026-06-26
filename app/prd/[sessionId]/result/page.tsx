@@ -113,6 +113,11 @@ export default function ResultPage() {
       const data = await res.json().catch(() => null);
       throw new Error(data?.error ?? 'Failed to save section');
     }
+    window.pendo?.track('prd_section_edited', {
+      session_id: sessionId,
+      section_name: section,
+      section_type: typeof value === 'string' ? 'text' : 'structured',
+    });
   };
 
   const handleRegenerate = async () => {
@@ -126,6 +131,9 @@ export default function ResultPage() {
       });
       if (!res.ok) throw new Error('Re-generation failed');
       const { prd: newPrd } = await res.json();
+      window.pendo?.track('prd_regenerated', {
+        session_id: sessionId,
+      });
       setPrd(newPrd);
       setLivePrd(newPrd);
       setScore(null);
@@ -145,7 +153,19 @@ export default function ResultPage() {
         body: JSON.stringify({ sessionId }),
       });
       const data = await res.json();
-      if (data.score) setScore(data.score);
+      if (data.score) {
+        window.pendo?.track('prd_scored', {
+          session_id: sessionId,
+          overall_score: data.score.overall,
+          clarity_score: data.score.clarity,
+          completeness_score: data.score.completeness,
+          testability_score: data.score.testability,
+          measurability_score: data.score.measurability,
+          gaps_count: Array.isArray(data.score.gaps) ? data.score.gaps.length : 0,
+          suggestions_count: Array.isArray(data.score.suggestions) ? data.score.suggestions.length : 0,
+        });
+        setScore(data.score);
+      }
     } catch {
       // silently fail
     } finally {
@@ -164,6 +184,11 @@ export default function ResultPage() {
       });
       const data = await res.json();
       if (data.share_url) {
+        const token = data.share_url.split('/').pop() ?? '';
+        window.pendo?.track('prd_share_link_created', {
+          session_id: sessionId,
+          share_token: token,
+        });
         setShareUrl(data.share_url);
         setShareModalOpen(true);
       }
@@ -185,6 +210,12 @@ export default function ResultPage() {
       });
       const data = await res.json();
       if (data.tickets) {
+        const epics = data.tickets.epics ?? [];
+        window.pendo?.track('ticket_breakdown_generated', {
+          session_id: sessionId,
+          epics_count: epics.length,
+          total_stories_count: epics.reduce((sum: number, e: { stories?: unknown[] }) => sum + (e.stories?.length ?? 0), 0),
+        });
         setTickets(data.tickets);
         setTicketModalOpen(true);
       }

@@ -43,6 +43,10 @@ export default function TicketBreakdown({ tickets, onClose }: TicketBreakdownPro
 
   const handleCopyMarkdown = async () => {
     await navigator.clipboard.writeText(toMarkdownTickets(tickets.epics));
+    window.pendo?.track('ticket_breakdown_exported', {
+      export_format: 'markdown',
+      epics_count: tickets.epics.length,
+    });
     setCopiedMd(true);
     setTimeout(() => setCopiedMd(false), 2000);
   };
@@ -53,6 +57,10 @@ export default function TicketBreakdown({ tickets, onClose }: TicketBreakdownPro
     const a = document.createElement('a');
     a.href = url; a.download = 'tickets.json'; a.click();
     URL.revokeObjectURL(url);
+    window.pendo?.track('ticket_breakdown_exported', {
+      export_format: 'json',
+      epics_count: tickets.epics.length,
+    });
   };
 
   return (

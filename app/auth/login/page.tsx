@@ -24,6 +24,9 @@ function LoginForm() {
       return;
     }
     const redirectTo = searchParams.get('redirectTo') ?? '/dashboard';
+    window.pendo?.track('user_logged_in', {
+      redirect_to: redirectTo,
+    });
     router.push(redirectTo);
     router.refresh();
   };

@@ -54,12 +54,20 @@ export default function ExportBar({
     setMenuOpen(false);
     const markdown = toMarkdown(prd);
     await navigator.clipboard.writeText(markdown);
+    window.pendo?.track('prd_exported_markdown', {
+      session_id: prd.session_id,
+      prd_title: prd.title ?? '',
+    });
     setCopied(true);
     setTimeout(() => setCopied(false), 2000);
   };
 
   const handleDownloadPDF = () => {
     setMenuOpen(false);
+    window.pendo?.track('prd_exported_pdf', {
+      session_id: prd.session_id,
+      prd_title: prd.title ?? '',
+    });
     toPDF(prd);
   };
 
@@ -75,6 +83,12 @@ export default function ExportBar({
       });
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? 'Failed to export to Notion');
+      const notionPageId = data.url?.split('/').pop() ?? '';
+      window.pendo?.track('prd_exported_notion', {
+        session_id: prd.session_id,
+        prd_title: prd.title ?? '',
+        notion_page_id: notionPageId,
+      });
       window.open(data.url, '_blank');
     } catch (error) {
       setNotionError(error instanceof Error ? error.message : 'Failed to export to Notion');
